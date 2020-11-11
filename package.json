@@ -15,6 +15,8 @@
     "cesium-navigation-es6": "^1.1.7",
     "echarts": "^4.9.0",
     "element-ui": "^2.13.2",
+    "google-protobuf": "^3.14.0-rc.2",
+    "grpc-web": "^1.2.1",
     "js-cookie": "^2.2.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
