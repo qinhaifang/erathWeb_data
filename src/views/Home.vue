@@ -14,14 +14,18 @@
       <div class="left">
         <title-box :title="titleBox1"></title-box>
         <p class="p20">全省县区：<b class="f30">{{total}}</b>个</p>
-        <pie-chart :pieData="pie1"></pie-chart>
+        <pie-chart v-if="fugai" :pieData="pie1"></pie-chart>
         <title-box :title="titleBox2"></title-box>
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
           <el-tab-pane label="发放资金" name="1" :key='activeName'>
-              <bar-chart :barData="bar"></bar-chart>
+            <div class="box">
+              <bar-chart v-if="flag" :barData="bar"></bar-chart>
+            </div>
           </el-tab-pane>
-          <el-tab-pane label="发放人次" name="2" :key='activeName'>
-            <bar-chart :barData="bar1"></bar-chart>
+          <el-tab-pane label="发放人次" name="2" :key='activeName + "1"'>
+            <div class="box"> 
+              <bar-chart :barData="bar1"></bar-chart>
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -48,9 +52,9 @@
         <title-box :title="titleBox4"></title-box>
         <el-tabs v-model="activeNameArea" type="card" @tab-click="handleClickArea">
           <el-tab-pane label="发放资金" name="1" :key='activeNameArea'>
-              <bar-chart :barData="bar2"></bar-chart>
+              <bar-chart v-if="quyuFlag"  :barData="bar2"></bar-chart>
           </el-tab-pane>
-          <el-tab-pane label="发放人次" name="2" :key='activeNameArea'>
+          <el-tab-pane label="发放人次" name="2" :key='activeNameArea+"1"'>
             <bar-chart :barData="bar3" ></bar-chart>
           </el-tab-pane>
         </el-tabs>
@@ -85,43 +89,49 @@ export default {
     return {
       year: "2020",
       adcode:'14',
+      type:'area', //bank  organ
+      flag:false, //初始化为false,拿到数据为true
+      quyuFlag:false,
+      fugai:false,
       title: "惠民惠农财政补贴资金“一卡通”",
       titleBox1: "覆盖区域",
       titleBox2: "补贴发放",
       titleBox3: "发放资金排行榜",
       titleBox4: "区域发放",
-      total:117,
+      total:0,  //覆盖区县
       activeName:"1",
       activeNameArea:"1",
       pie1:{
         id:"pieChart1",
         height:'200px',
-        data1:80,
-        data2:10
+        data1:0,
+        data2:0,
+        text1:0,
+        text2:0
       },
       bar:{
         id:"barChart",
-        height:'400px',
-        dataX:[239,181,154,144,135,117,29,181,154,144],
-        dataY:["农机购置","党员补贴","儿童补贴","低保补贴","伤残补贴","优抚补贴","低保补贴","伤残补贴","优抚补贴","农机购置"]
+        height:'800px',
+        dataX:[],
+        dataY:[]
       },
       bar1:{
         id:"barChart1",
-        height:'400px',
-        dataX:[29,181,154,144,135,117,29,181,154,144],
-        dataY:["党员补贴","农机购置","儿童补贴","低保补贴","伤残补贴","优抚补贴","低保补贴","伤残补贴","优抚补贴","农机购置"]
+        height:'800px',
+        dataX:[],
+        dataY:[]
       },
       bar2:{
         id:"barChart2",
         height:'400px',
-        dataX:[29,181,154,144,135,117,29,181,154,144],
-        dataY:["吕梁市","太原市","运城市","忻州市","阳泉市","临汾市","低保补贴","伤残补贴","优抚补贴","农机购置"]
+        dataX:[],
+        dataY:[]
       },
       bar3:{
         id:"barChart3",
         height:'400px',
-        dataX:[99,181,154,144,135,117,29,181,154,144],
-        dataY:["党员补贴","农机购置","儿童补贴","低保补贴","伤残补贴","优抚补贴","低保补贴","伤残补贴","优抚补贴","农机购置"]
+        dataX:[],
+        dataY:[]
       },
       options: [],
       typeValue: '',
@@ -140,14 +150,17 @@ export default {
     let earthReq = new StatisticalReq();
     earthReq.setStatisticalCode(this.adcode)
     earthReq.setStatisticalYear(this.year)
-    // earthReq.setStatisticalType('')
+    earthReq.setStatisticalType(this.type)
 
+    this.coverArea(earthReq)
     this.getTotal(earthReq);
     this.getRank(earthReq);
     this.getType(earthReq);
+    this.subsidyList(earthReq);
+    this.areaList(earthReq);
+    
     // const vm = this;
     // vm.$nextTick(()=>{})
-    console.log(this.numFormat(this.totalData[1].num))
   },
   methods: {
     numFormat(num) {
@@ -164,7 +177,7 @@ export default {
           }else if(index == 1){
             item.num = data.totalMoney
           }else if(index == 2){
-            item.num = data.rebateType    //totalRebate
+            item.num = data.totalRebate    //totalRebate
           }else if(index == 3){
             item.num = data.totalPerson
           }else if(index == 4){
@@ -183,26 +196,73 @@ export default {
     },
     // 补贴类型
     getType(params){
-      console.log('params',params)
       earthClient.getRebatesListByRegionCode(params).then(response =>{
-        console.log('筛选',response.toObject().bonusResList)
         this.options = response.toObject().bonusResList;
       })
     },
     // 补贴类型选择
     selectType(value){
-      console.log('补贴类型选择',value);
       let earthReq = new StatisticalReq();
       earthReq.setStatisticalCode(this.adcode)
       earthReq.setStatisticalYear(this.year)
       earthReq.setStatisticalType(value)
-      this.getType(earthReq)
+      this.getRank(earthReq)
     },
+    // 补贴发放
+    subsidyList(params){
+      earthClient.getBonusSubsidyAllData(params).then(response =>{
+        var data = response.toObject();
+        data.moneyResList.forEach((item,index) =>{
+          this.bar.dataY.push(item.rebateType)
+          this.bar.dataX.push(Number(item.totalMoney))
+        })
+        data.countResList.forEach((item,index) =>{
+          this.bar1.dataY.push(item.rebateType)
+          this.bar1.dataX.push(Number(item.totalCount))
+        })
+        this.flag = true;
+      })
+    },
+    // 区域发放
+    areaList(params){
+      earthClient.getAreaSubsidyAllData(params).then(response =>{
+        var data = response.toObject();
+        data.moneyResList.length < 5 ? this.bar2.height = '200px' : this.bar2.height = '400px'
+        data.countResList.length < 5 ? this.bar3.height = '200px' : this.bar3.height = '400px'
+        data.moneyResList.forEach((item,index) =>{
+          this.bar2.dataY.push(item.areaName)
+          this.bar2.dataX.push(Number(item.totalMoney))
+        })
+        data.countResList.forEach((item,index) =>{
+          this.bar3.dataY.push(item.areaName)
+          this.bar3.dataX.push(Number(item.totalCount))
+        })
+        this.quyuFlag = true;
+      })
+    },
+    // 覆盖区域
+    coverArea(params){
+      earthClient.getGraphicStatistics(params).then(response =>{
+        var data = response.toObject();
+        this.total = Number(data.graphicStatisticsList[0].value) + Number(data.graphicStatisticsList[1].value)
+        data.graphicStatisticsList.forEach((item,index)=>{
+          if(index == 0){
+            this.pie1.data1 = (Number(item.value)/this.total*100).toFixed(2);
+            this.pie1.text1 = "覆盖区县："+ item.value + '个';
+          }else{
+            this.pie1.data2 = parseInt(100-this.pie1.data1);
+            this.pie1.text2 = "未覆盖区县："+ item.value + '个';
+          }
+        })
+        this.fugai = true;
+      })
+    },
+    // 补贴发放列表
     handleClick(tab, event) {
-      console.log(111,tab.name);
+      // console.log(111,tab.name);
     },
     handleClickArea(tab, event) {
-      console.log(111,tab.name);
+      // console.log('区域发放列表',tab.name);
     },
   },
 };
@@ -275,6 +335,10 @@ export default {
     background: #F0DE40;
     border: 1px solid #FFBB52;
   }
+  .rank{
+    height: 210px;
+    overflow: auto;
+  }
   .rank ul li span:first-child{
     display: inline-block;
     width: 22px;
@@ -314,7 +378,10 @@ export default {
     font-size: 40px!important;
     font-family: 'number';
   }
-
+  .box{
+    height: 450px;
+    overflow: auto;
+  }
   
 </style>
 <style>

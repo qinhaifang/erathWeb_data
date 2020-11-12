@@ -520,7 +520,9 @@ proto.earth.StatisticsDataRes.toObject = function(includeInstance, msg) {
     coverArea: jspb.Message.getFieldWithDefault(msg, 4, 0),
     totalPerson: jspb.Message.getFieldWithDefault(msg, 5, 0),
     totalOrgan: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    totalBank: jspb.Message.getFieldWithDefault(msg, 7, 0)
+    totalBank: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    pageNum: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    pageSize: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -584,6 +586,14 @@ proto.earth.StatisticsDataRes.deserializeBinaryFromReader = function(msg, reader
     case 7:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTotalBank(value);
+      break;
+    case 8:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setPageNum(value);
+      break;
+    case 9:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setPageSize(value);
       break;
     default:
       reader.skipField();
@@ -660,6 +670,20 @@ proto.earth.StatisticsDataRes.serializeBinaryToWriter = function(message, writer
   if (f !== 0) {
     writer.writeInt32(
       7,
+      f
+    );
+  }
+  f = message.getPageNum();
+  if (f !== 0) {
+    writer.writeInt32(
+      8,
+      f
+    );
+  }
+  f = message.getPageSize();
+  if (f !== 0) {
+    writer.writeInt32(
+      9,
       f
     );
   }
@@ -789,6 +813,42 @@ proto.earth.StatisticsDataRes.prototype.getTotalBank = function() {
  */
 proto.earth.StatisticsDataRes.prototype.setTotalBank = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
+};
+
+
+/**
+ * optional int32 page_num = 8;
+ * @return {number}
+ */
+proto.earth.StatisticsDataRes.prototype.getPageNum = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.earth.StatisticsDataRes} returns this
+ */
+proto.earth.StatisticsDataRes.prototype.setPageNum = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional int32 page_size = 9;
+ * @return {number}
+ */
+proto.earth.StatisticsDataRes.prototype.getPageSize = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.earth.StatisticsDataRes} returns this
+ */
+proto.earth.StatisticsDataRes.prototype.setPageSize = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
@@ -1208,7 +1268,7 @@ proto.earth.BonusResList.prototype.clearBonusResList = function() {
  * @private {!Array<number>}
  * @const
  */
-proto.earth.BonusResAllList.repeatedFields_ = [1];
+proto.earth.BonusResAllList.repeatedFields_ = [1,2];
 
 
 
@@ -1241,8 +1301,10 @@ proto.earth.BonusResAllList.prototype.toObject = function(opt_includeInstance) {
  */
 proto.earth.BonusResAllList.toObject = function(includeInstance, msg) {
   var f, obj = {
-    bonusAllResList: jspb.Message.toObjectList(msg.getBonusAllResList(),
-    proto.earth.BonusResList.toObject, includeInstance)
+    moneyResList: jspb.Message.toObjectList(msg.getMoneyResList(),
+    proto.earth.BonusRes.toObject, includeInstance),
+    countResList: jspb.Message.toObjectList(msg.getCountResList(),
+    proto.earth.BonusRes.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -1280,9 +1342,14 @@ proto.earth.BonusResAllList.deserializeBinaryFromReader = function(msg, reader) 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new proto.earth.BonusResList;
-      reader.readMessage(value,proto.earth.BonusResList.deserializeBinaryFromReader);
-      msg.addBonusAllRes(value);
+      var value = new proto.earth.BonusRes;
+      reader.readMessage(value,proto.earth.BonusRes.deserializeBinaryFromReader);
+      msg.addMoneyRes(value);
+      break;
+    case 2:
+      var value = new proto.earth.BonusRes;
+      reader.readMessage(value,proto.earth.BonusRes.deserializeBinaryFromReader);
+      msg.addCountRes(value);
       break;
     default:
       reader.skipField();
@@ -1313,43 +1380,51 @@ proto.earth.BonusResAllList.prototype.serializeBinary = function() {
  */
 proto.earth.BonusResAllList.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getBonusAllResList();
+  f = message.getMoneyResList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
       1,
       f,
-      proto.earth.BonusResList.serializeBinaryToWriter
+      proto.earth.BonusRes.serializeBinaryToWriter
+    );
+  }
+  f = message.getCountResList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
+      f,
+      proto.earth.BonusRes.serializeBinaryToWriter
     );
   }
 };
 
 
 /**
- * repeated BonusResList bonus_all_res = 1;
- * @return {!Array<!proto.earth.BonusResList>}
+ * repeated BonusRes money_res = 1;
+ * @return {!Array<!proto.earth.BonusRes>}
  */
-proto.earth.BonusResAllList.prototype.getBonusAllResList = function() {
-  return /** @type{!Array<!proto.earth.BonusResList>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.earth.BonusResList, 1));
+proto.earth.BonusResAllList.prototype.getMoneyResList = function() {
+  return /** @type{!Array<!proto.earth.BonusRes>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.earth.BonusRes, 1));
 };
 
 
 /**
- * @param {!Array<!proto.earth.BonusResList>} value
+ * @param {!Array<!proto.earth.BonusRes>} value
  * @return {!proto.earth.BonusResAllList} returns this
 */
-proto.earth.BonusResAllList.prototype.setBonusAllResList = function(value) {
+proto.earth.BonusResAllList.prototype.setMoneyResList = function(value) {
   return jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
 
 /**
- * @param {!proto.earth.BonusResList=} opt_value
+ * @param {!proto.earth.BonusRes=} opt_value
  * @param {number=} opt_index
- * @return {!proto.earth.BonusResList}
+ * @return {!proto.earth.BonusRes}
  */
-proto.earth.BonusResAllList.prototype.addBonusAllRes = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.earth.BonusResList, opt_index);
+proto.earth.BonusResAllList.prototype.addMoneyRes = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.earth.BonusRes, opt_index);
 };
 
 
@@ -1357,8 +1432,46 @@ proto.earth.BonusResAllList.prototype.addBonusAllRes = function(opt_value, opt_i
  * Clears the list making it empty but non-null.
  * @return {!proto.earth.BonusResAllList} returns this
  */
-proto.earth.BonusResAllList.prototype.clearBonusAllResList = function() {
-  return this.setBonusAllResList([]);
+proto.earth.BonusResAllList.prototype.clearMoneyResList = function() {
+  return this.setMoneyResList([]);
+};
+
+
+/**
+ * repeated BonusRes count_res = 2;
+ * @return {!Array<!proto.earth.BonusRes>}
+ */
+proto.earth.BonusResAllList.prototype.getCountResList = function() {
+  return /** @type{!Array<!proto.earth.BonusRes>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.earth.BonusRes, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.earth.BonusRes>} value
+ * @return {!proto.earth.BonusResAllList} returns this
+*/
+proto.earth.BonusResAllList.prototype.setCountResList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.earth.BonusRes=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.earth.BonusRes}
+ */
+proto.earth.BonusResAllList.prototype.addCountRes = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.earth.BonusRes, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.earth.BonusResAllList} returns this
+ */
+proto.earth.BonusResAllList.prototype.clearCountResList = function() {
+  return this.setCountResList([]);
 };
 
 

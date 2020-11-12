@@ -15,12 +15,12 @@ export default {
     };
   },
   created() {
-    console.log(55555,this.barData)
+    // console.log(55555,this.barData)
   },
   watch:{
     barData:function(newValue,oldValue){
       console.log('new',newValue,oldValue)
-      this.drawline();
+      this.initChart();
     },
     deep:true
   },
@@ -34,8 +34,10 @@ export default {
   methods: {
     setOptions({dataX,dataY} = {}) {
       var salvProMax =[];//背景按最大值
+      let a = dataX;
+      let b = Math.max(...a) 
       for (let i = 0; i < dataX.length; i++) {
-          salvProMax.push(dataX[0])
+          salvProMax.push(b)
       }
       this.barChart.setOption({
         // backgroundColor: "#003366",

@@ -1,9 +1,14 @@
 <template>
-  <div
+  <div>
+   <div
     :id="pieData.id"
     ref="myChart"
     :style="{ width: '100%', height: pieData.height }"
   ></div>
+    <span>{{pieData.text1}}</span>
+    <span>{{pieData.text2}}</span>
+  </div>
+  
 </template>
 <script>
 import echarts from "echarts";
@@ -14,8 +19,12 @@ export default {
       chartPie: null,
     };
   },
+  watch: {
+    
+  },
   mounted() {
     this.drawLine();
+
   },
   methods: {
     drawLine() {
@@ -41,17 +50,24 @@ export default {
         normal: {
           formatter: '占比'+'{c}%',
           position: 'center',
+
           show: true,
           textStyle: {
             fontSize: '16',
             fontWeight: 'normal',
-            color: '#4897f6'
+            color: '#4897f6',
           }
         }
       };
 
       const option = {
         // backgroundColor: '#fff',
+        tooltip: {
+            formatter: function (params) {
+              console.log('params',params)
+                return '<span style="color: #fff;">综合得分：'+ 123 + '分</span>';
+            }
+        },
         title: [{
           text: '覆盖区县',
           left: '24%',
@@ -64,7 +80,7 @@ export default {
             textAlign: 'center',
           },
         }, {
-          text: '未覆盖区',
+          text: '未覆盖区县',
           left: '74%',
           top: '55%',
           textAlign: 'center',
