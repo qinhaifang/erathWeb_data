@@ -2,13 +2,16 @@
   <div id="main">
     <earth-map></earth-map>
     <header>
-      <el-date-picker v-model="year" type="year" placeholder="选择年">
+      <div class="datePicker">
+        <el-date-picker v-model="year"  format="yyyy 年"
+      value-format="yyyy" type="year" @blur="datePicker" placeholder="选择年">
       </el-date-picker>
-      <div class="fr p10">
+      </div>
+      <div class="fr p10" style="position: relative;bottom: 20px;">
         欢迎您登录 &nbsp;&nbsp;
         <span><i class="el-icon-switch-button blue"></i></span>
       </div>
-      <h3 class="tc">{{ title }}</h3>
+      <h3 class="tc" @click="flayEarth()">{{ title }}</h3>
     </header>
     <div class="container">
       <div class="left">
@@ -87,7 +90,7 @@ export default {
   },
   data() {
     return {
-      year: "2020",
+      year: '2021 年',
       adcode:'14',
       type:'area', //bank  organ
       flag:false, //初始化为false,拿到数据为true
@@ -113,25 +116,29 @@ export default {
         id:"barChart",
         height:'800px',
         dataX:[],
-        dataY:[]
+        dataY:[],
+        unit:'万元'
       },
       bar1:{
         id:"barChart1",
         height:'800px',
         dataX:[],
-        dataY:[]
+        dataY:[],
+        unit:'个'
       },
       bar2:{
         id:"barChart2",
-        height:'400px',
+        height:'800px',
         dataX:[],
-        dataY:[]
+        dataY:[],
+        unit:'万元'
       },
       bar3:{
         id:"barChart3",
-        height:'400px',
+        height:'800px',
         dataX:[],
-        dataY:[]
+        dataY:[],
+        unit:'个'
       },
       options: [],
       typeValue: '',
@@ -146,10 +153,27 @@ export default {
       ]
     };
   },
+  watch:{
+    year:function(value){
+      let earthReq = new StatisticalReq();
+      earthReq.setStatisticalCode(this.adcode)
+      earthReq.setStatisticalYear(this.year.substr(0,4))
+      earthReq.setStatisticalType(this.type)
+      this.flag = false;
+      this.quyuFlag = false;
+      this.fugai = false;
+      this.coverArea(earthReq)
+      this.getTotal(earthReq);
+      this.getRank(earthReq);
+      this.getType(earthReq);
+      this.subsidyList(earthReq);
+      this.areaList(earthReq);
+    }
+  },
   mounted() {
     let earthReq = new StatisticalReq();
     earthReq.setStatisticalCode(this.adcode)
-    earthReq.setStatisticalYear(this.year)
+    earthReq.setStatisticalYear(this.year.substr(0,4))
     earthReq.setStatisticalType(this.type)
 
     this.coverArea(earthReq)
@@ -163,6 +187,12 @@ export default {
     // vm.$nextTick(()=>{})
   },
   methods: {
+    flayEarth(state){
+      Bus.$emit('aa')
+    },
+    datePicker(value){
+      this.year = value.picker.year + '年'
+    },
     numFormat(num) {
         var c = (num.toString().indexOf ('.') !== -1) ? num.toLocaleString() : num.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
         this.totalData[1].num = c
@@ -175,7 +205,7 @@ export default {
           if(index == 0){
             item.num = data.coverArea
           }else if(index == 1){
-            item.num = data.totalMoney
+            item.num = data.totalMoney == '' ? 0 :data.totalMoney
           }else if(index == 2){
             item.num = data.totalRebate    //totalRebate
           }else if(index == 3){
@@ -190,6 +220,7 @@ export default {
     },
     // 发放资金排行榜
     getRank(params){
+      this.rankData = [];
       earthClient.getBonusRankData(params).then(response =>{
         this.rankData = response.toObject().bonusResList.slice(0,5);
       })
@@ -210,6 +241,10 @@ export default {
     },
     // 补贴发放
     subsidyList(params){
+      this.bar.dataY = [];
+      this.bar.dataX = [];
+      this.bar1.dataY = [];
+      this.bar1.dataX = [];
       earthClient.getBonusSubsidyAllData(params).then(response =>{
         var data = response.toObject();
         data.moneyResList.forEach((item,index) =>{
@@ -227,8 +262,12 @@ export default {
     areaList(params){
       earthClient.getAreaSubsidyAllData(params).then(response =>{
         var data = response.toObject();
-        data.moneyResList.length < 5 ? this.bar2.height = '200px' : this.bar2.height = '400px'
-        data.countResList.length < 5 ? this.bar3.height = '200px' : this.bar3.height = '400px'
+        this.bar2.dataY = [];
+        this.bar2.dataX = [];
+        this.bar3.dataY = [];
+        this.bar3.dataX = [];
+        data.moneyResList.length < 5 ? this.bar2.height = '200px' : this.bar2.height = '600px'
+        data.countResList.length < 5 ? this.bar3.height = '200px' : this.bar3.height = '600px'
         data.moneyResList.forEach((item,index) =>{
           this.bar2.dataY.push(item.areaName)
           this.bar2.dataX.push(Number(item.totalMoney))
@@ -286,10 +325,12 @@ export default {
     font-family: 'alhyznh';
     font-size: 28px;
     letter-spacing: 4px;
+    padding-left: 9%;
     /* color: antiquewhite; */
     background: linear-gradient(to right, #2968E8, #72E6FF);
     -webkit-background-clip: text;
     color: transparent;
+    cursor: pointer;
   }
   .container{
     width: 100%;
@@ -336,7 +377,7 @@ export default {
     border: 1px solid #FFBB52;
   }
   .rank{
-    height: 210px;
+    height: 230px;
     overflow: auto;
   }
   .rank ul li span:first-child{
@@ -381,6 +422,10 @@ export default {
   .box{
     height: 450px;
     overflow: auto;
+  }
+  .datePicker{
+    position: relative;
+    top: 18%;
   }
   
 </style>

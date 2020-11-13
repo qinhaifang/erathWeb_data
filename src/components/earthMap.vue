@@ -18,6 +18,13 @@ export default {
           name: "山西省"
         },
         {
+          zoneName: "qg",
+          lon: 112.003,
+          lat: 30,
+          height: 10911680,
+          name: "全国"
+        },
+        {
           zoneName: "taiyuan",
           lon: 112.549248,
           lat: 37.857014,
@@ -94,19 +101,17 @@ export default {
           height: 311615,
           name: "吕梁市"
         },
-        {
-          zoneName: "qg",
-          lon: 112.003,
-          lat: 30,
-          height: 10911680,
-          name: "全国"
-        }
+        
       ],
     };
   },
   mounted() {
     this.init();
-    this.addZoneBoundary(this.zoneObject[0])
+    Bus.$on('aa',()=>{
+      this.addZoneBoundary(this.zoneObject[0])
+      // state ? this.addZoneBoundary(this.zoneObject[0]) : this.addZoneBoundary(this.zoneObject[1])
+    })
+    // setTimeout(this.addZoneBoundary(this.zoneObject[0]),10000)
   },
   methods: {
     init() {
@@ -154,8 +159,8 @@ export default {
     addZoneBoundary(obj,isFly = true){
       let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
         stroke:Cesium.Color.YELLOW,
-        fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.8),
-        strokeWidth:3
+        fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5),
+        strokeWidth:10
       })
       neighborhoodsPromise.then(dataSource => {
         this.viewer.dataSources.add(dataSource);
@@ -195,7 +200,7 @@ export default {
             entity.label = {
               //创建一个标签，在中心点位置
               text: name,
-              color: Cesium.Color.fromCssColorString("#fff"),
+              color: Cesium.Color.fromCssColorString("#000"),
               font: "normal 26px MicroSoft YaHei",
               showBackground: true,
               scale: 0.5,
@@ -215,7 +220,7 @@ export default {
     flyTo(log,lat,height){
       this.viewer.camera.flyTo({
         destination:Cesium.Cartesian3.fromDegrees(log,lat,height),
-        duration:3.0
+        duration:5.0
       })
     }
   },

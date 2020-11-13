@@ -32,7 +32,7 @@ export default {
     
   },
   methods: {
-    setOptions({dataX,dataY} = {}) {
+    setOptions({dataX,dataY,unit} = {}) {
       var salvProMax =[];//背景按最大值
       let a = dataX;
       let b = Math.max(...a) 
@@ -54,7 +54,7 @@ export default {
             type: "none",
           },
           formatter: function (params) {
-            return params[0].name + " : " + params[0].value + '万元';
+            return params[0].name + " : " + params[0].value + unit;
           },
         },
         xAxis: {

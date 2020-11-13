@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div style="poition:relative">
    <div
     :id="pieData.id"
     ref="myChart"
     :style="{ width: '100%', height: pieData.height }"
   ></div>
-    <span>{{pieData.text1}}</span>
-    <span>{{pieData.text2}}</span>
+    <span class="pie">{{pieData.text1}}</span>
+    <span class="pie">{{pieData.text2}}</span>
   </div>
   
 </template>
@@ -216,4 +216,11 @@ export default {
 };
 </script>
 <style scoped>
+  .pie{
+    display: inline;
+    position: relative;
+    left: -5%;
+    bottom: 46px;
+    padding-left: 29px
+  }
 </style>
