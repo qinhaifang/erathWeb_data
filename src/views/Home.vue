@@ -27,7 +27,7 @@
           </el-tab-pane>
           <el-tab-pane label="发放人次" name="2" :key='activeName + "1"'>
             <div class="box"> 
-              <bar-chart :barData="bar1"></bar-chart>
+              <bar-chart v-if="flag" :barData="bar1"></bar-chart>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -55,7 +55,7 @@
         <title-box :title="titleBox4"></title-box>
         <el-tabs v-model="activeNameArea" type="card" @tab-click="handleClickArea">
           <el-tab-pane label="发放资金" name="1" :key='activeNameArea'>
-              <bar-chart v-if="quyuFlag"  :barData="bar2"></bar-chart>
+            <bar-chart v-if="quyuFlag"  :barData="bar2"></bar-chart>
           </el-tab-pane>
           <el-tab-pane label="发放人次" name="2" :key='activeNameArea+"1"'>
             <bar-chart :barData="bar3" ></bar-chart>
@@ -90,7 +90,7 @@ export default {
   },
   data() {
     return {
-      year: '2021 年',
+      year: '2020 年',
       adcode:'14',
       type:'area', //bank  organ
       flag:false, //初始化为false,拿到数据为true
