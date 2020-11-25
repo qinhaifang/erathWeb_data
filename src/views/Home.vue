@@ -64,29 +64,68 @@
       </div>
       <div class="top">
         <ul>
-          <li v-for="(item,index) in totalData" :key="index">
+          <li v-for="(item,index) in totalData" :key="index" @click="alertBox(index)">
             <span>{{item.name}}</span>
-            <p class="p10"><span>{{item.num}}</span>&nbsp;&nbsp;{{item.unit}}</p>
+            <p class="p10" >
+              <span>{{item.num}}</span>&nbsp;&nbsp;{{item.unit}}
+            </p>
           </li>
         </ul>
       </div>
+      <el-dialog
+        :title="boxTitle"
+        :visible.sync="buTieDesc"
+        destroy-on-close
+        width="40%">
+        <ul class="boxUl">
+          <li v-for="(item,index) in getAreaBonusDetail" :key="index">
+            <img src="../assets/loginOut.svg" alt="">
+            <span>{{item.title}}</span>
+            <span>{{item.value}}</span>
+          </li>
+          <div class="clear"></div>
+        </ul>
+        <title-box style="background-size:inherit;margin-top:20px" :title="titleBox5"></title-box>
+        <bar-charts v-if="descFlag" :barData="bar4"></bar-charts>
+      </el-dialog>
+      <el-dialog
+        title="主管部门"
+        :visible.sync="depBox"
+        destroy-on-close
+        width="30%">
+        <el-table :data="depData" height="500px">
+          <el-table-column property="name" label="主管部门" ></el-table-column>
+          <el-table-column property="value" label="补贴类型数" width="120" align="center"></el-table-column>
+          <el-table-column property="totalCount" label="发放金额（万元）" width="150" align="center"></el-table-column>
+        </el-table>
+      </el-dialog>
+      <el-dialog
+        title="银行发放资金占比"
+        :visible.sync="bankBox"
+        destroy-on-close
+        width="20%">
+        <pie-charts v-if="bankFlag" :pieData="pie2"></pie-charts>
+      </el-dialog>
     </div>
   </div>
 </template>
 <script>
 import TitleBox from "./title";
 import PieChart from "../components/pieChart"
+import PieCharts from "../components/pieCharts"
 import EarthMap from "../components/earthMap"
 import BarChart from "../components/barChart"
+import BarCharts from "../components/barCharts"
 import {earthClient} from '@/api/public.js';
 import {StatisticalReq} from '@/api/earth/earth_message_pb.js'
-
 export default {
   components: {
     TitleBox,
     EarthMap,
     PieChart,
-    BarChart
+    PieCharts,
+    BarChart,
+    BarCharts
   },
   data() {
     return {
@@ -96,11 +135,14 @@ export default {
       flag:false, //初始化为false,拿到数据为true
       quyuFlag:false,
       fugai:false,
+      descFlag:false,
+      bankFlag:false,
       title: "惠民惠农财政补贴资金“一卡通”",
       titleBox1: "覆盖区域",
       titleBox2: "补贴发放",
       titleBox3: "发放资金排行榜",
       titleBox4: "区域发放",
+      titleBox5: "区域发放情况",
       total:0,  //覆盖区县
       activeName:"1",
       activeNameArea:"1",
@@ -111,6 +153,11 @@ export default {
         data2:0,
         text1:0,
         text2:0
+      },
+      pie2:{
+        id:"pieChart2",
+        height:'200px',
+        data:[],
       },
       bar:{
         id:"barChart",
@@ -140,6 +187,14 @@ export default {
         dataY:[],
         unit:'个'
       },
+      bar4:{
+        id:"barChart4",
+        height:'400px',
+        dataX:[],
+        dataY:[],
+        dataZ:[],
+        unit:'万元'
+      },
       options: [],
       typeValue: '',
       rankData:[],
@@ -150,7 +205,19 @@ export default {
         {name:'受益人口',num:0,unit:'人'},
         {name:'代发银行',num:0,unit:'个'},
         {name:'主管部门',num:0,unit:'个'},
-      ]
+      ],
+      buTieDesc:false,
+      boxTitle:null,
+      getAreaBonusDetail:[  //补贴发放详情头部
+        {title:'发放资金',value:0},
+        {title:'发放人次',value:0},
+        {title:'覆盖区县',value:0},
+        {title:'发放笔数',value:0}
+      ],
+      depBox:false,
+      depData: [],
+      bankBox:false,
+
     };
   },
   watch:{
@@ -162,19 +229,21 @@ export default {
       this.flag = false;
       this.quyuFlag = false;
       this.fugai = false;
+      this.descFlag = false;
       this.coverArea(earthReq)
       this.getTotal(earthReq);
       this.getRank(earthReq);
       this.getType(earthReq);
       this.subsidyList(earthReq);
       this.areaList(earthReq);
-    }
+    },
   },
   mounted() {
     let earthReq = new StatisticalReq();
     earthReq.setStatisticalCode(this.adcode)
     earthReq.setStatisticalYear(this.year.substr(0,4))
     earthReq.setStatisticalType(this.type)
+    // earthReq.setStatisticalName(name)
 
     this.coverArea(earthReq)
     this.getTotal(earthReq);
@@ -182,9 +251,13 @@ export default {
     this.getType(earthReq);
     this.subsidyList(earthReq);
     this.areaList(earthReq);
-    
-    // const vm = this;
-    // vm.$nextTick(()=>{})
+    Bus.$on('buTeiDesc',(name,state)=>{
+      this.buTieDesc = state;
+      this.boxTitle = name;
+      earthReq.setStatisticalType(name)
+      this.getAreaBonusDetailData(earthReq)
+      this.getAreaSubsidyData(earthReq)
+    })
   },
   methods: {
     flayEarth(state){
@@ -194,8 +267,8 @@ export default {
       this.year = value.picker.year + '年'
     },
     numFormat(num) {
-        var c = (num.toString().indexOf ('.') !== -1) ? num.toLocaleString() : num.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
-        this.totalData[1].num = c
+      var c = (num.toString().indexOf ('.') !== -1) ? num.toLocaleString() : num.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+      this.totalData[1].num = c
     },
     // 统计数据
     getTotal(params){
@@ -296,6 +369,60 @@ export default {
         this.fugai = true;
       })
     },
+    // 补贴发放详情头部
+    getAreaBonusDetailData(params){
+      console.log(params.toObject())
+      earthClient.getAreaBonusDetailData(params).then(response =>{
+        let data = response.toObject();
+        this.getAreaBonusDetail = [  //补贴发放详情头部
+          {title:'发放资金',value:data.totalMoney},
+          {title:'发放人次',value:data.totalPerson},
+          {title:'覆盖区县',value:data.coverArea},
+          {title:'发放笔数',value:data.totalRebate}
+        ]
+      })
+    },
+    // 补贴发放详情
+    getAreaSubsidyData(params){
+      this.descFlag = false
+      earthClient.getAreaSubsidyData(params).then(response =>{
+        this.descFlag = true
+        let data = response.toObject();
+        this.bar4.dataY = [];
+        this.bar4.dataX = [];
+        this.bar4.dataZ = [];
+        data.bonusResList.forEach((item,index) =>{
+          this.bar4.dataY.push(item.areaName)
+          this.bar4.dataX.push(item.totalMoney)
+          this.bar4.dataZ.push(item.totalCount)
+        })
+        console.log(111,this.bar4)
+        
+      })
+    }, 
+    alertBox(index){
+      let earthReq = new StatisticalReq();
+      earthReq.setStatisticalCode(this.adcode)
+      earthReq.setStatisticalYear(this.year.substr(0,4))
+      
+      if(index == 4){
+        this.bankBox = true
+        earthReq.setStatisticalType('bank')
+        earthClient.getGraphicStatistics(earthReq).then(response =>{
+          var data = response.toObject();
+          this.pie2.data = data.graphicStatisticsList
+          this.bankFlag = true;
+        })
+      }else if(index == 5){
+        this.depBox = true
+        earthReq.setStatisticalType('organ')
+        earthClient.getGraphicStatistics(earthReq).then(response =>{
+          var data = response.toObject().graphicStatisticsList;
+          this.depData = data
+        })
+      }
+     
+    } ,
     // 补贴发放列表
     handleClick(tab, event) {
       // console.log(111,tab.name);
@@ -307,6 +434,12 @@ export default {
 };
 </script>
 <style scoped>
+  .p10{
+    padding: 10px;
+  }
+  .clear{
+    clear: both;
+  }
   #main {
     position: relative;
     width: 100%;
@@ -314,9 +447,10 @@ export default {
   }
   header{
     width: 100%;
-    height: 110px;
-    background: url("../assets/headerBackground.svg") no-repeat top center;
-    background-size: cover;
+    height: 100px;
+    /* background: url("../assets/headerBackground.svg") no-repeat top center; */
+    background: url("../assets/header.png") no-repeat top center;
+    background-size: contain;
     position: fixed;
     left: 0;
     top: 0;
@@ -331,6 +465,8 @@ export default {
     -webkit-background-clip: text;
     color: transparent;
     cursor: pointer;
+    position: relative;
+    top: -20px;
   }
   .container{
     width: 100%;
@@ -343,7 +479,8 @@ export default {
   .left{
     width: 320px;
     height: 100%;
-    background-color: rgba(55, 100, 171,.3);
+    /* background-color: rgba(55, 100, 171,.3); */
+    background-color: rgba(0, 0, 0,.3);
     /* box-shadow: 2px 0px 28px 0px rgba(55, 100, 171,.8); */
     position: absolute;
     top: 8%;
@@ -355,7 +492,8 @@ export default {
     position: absolute;
     top: 8%;
     right: 0;
-    background-color: rgba(55, 100, 171,.3);
+    background-color: rgba(0, 0, 0,.3);
+    /* background-color: rgba(55, 100, 171,.3); */
   }
   .rank ul li{
     padding: 0 10px;
@@ -427,6 +565,25 @@ export default {
     position: relative;
     top: 18%;
   }
+  .boxUl li{
+    width: 20%;
+    padding: 10px;
+    margin:0 5px;
+    float: left;
+    border:1px solid #ffd66c;
+    border-radius: 4px;
+  }
+  .boxUl li img{
+    float: left;
+  }
+  .boxUl li span{
+    padding-left: 50px;
+    display: block;
+  }
+  .boxUl li span:last-child{
+    padding-top: 10px;
+  }
+
   
 </style>
 <style>
@@ -440,7 +597,23 @@ export default {
     width: 300px;
     margin-left: 10px;
   }
-  .el-date-editor.el-input{
-    
+  .el-dialog{
+    background: linear-gradient(90deg, rgba(41, 104, 232, 0.7) 0%, rgba(0, 210, 255, 0) 100%);
+    border: 1px solid #00B1FF;
+    border-radius: 4px;
+    color: #fff;
+  }
+  .el-dialog__title,.el-dialog__body{
+    color: #fff;
+  }
+  .el-table ,.el-table--fit ,.el-table th, .el-table tr{
+    color: #fff;
+    background: rgba(0, 0, 0, 0.1);
+  }
+  .el-table tbody tr:hover>td { 
+    background-color:rgba(0, 0, 0, 0.1)!important
+  }
+  .el-table th:hover, .el-table tr:hover td{
+    background:none;
   }
 </style>

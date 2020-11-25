@@ -1,9 +1,11 @@
 <template>
-  <div
-    :id="barData.id"
-    ref="myChart"
-    :style="{ width: '100%', height: barData.height }"
-  ></div>
+  <div>
+    <div
+      :id="barData.id"
+      ref="myChart"
+      :style="{ width: '100%', height: barData.height }"
+    ></div>
+  </div>
 </template>
 <script>
 import echarts from "echarts";
@@ -17,27 +19,26 @@ export default {
   created() {
     // console.log(55555,this.barData)
   },
-  watch:{
-    barData:function(newValue,oldValue){
-      console.log('new',newValue,oldValue)
+  watch: {
+    barData: function (newValue, oldValue) {
+      console.log("new", newValue, oldValue);
       this.initChart();
     },
-    deep:true
+    deep: true,
   },
   mounted() {
-    this.initChart()
+    this.initChart();
     // vm.$nextTick(()=>{
     //   this.drawline();
     // })
-    
   },
   methods: {
-    setOptions({dataX,dataY,unit} = {}) {
-      var salvProMax =[];//背景按最大值
+    setOptions({ dataX, dataY, unit } = {}) {
+      var salvProMax = []; //背景按最大值
       let a = dataX;
-      let b = Math.max(...a) 
+      let b = Math.max(...a);
       for (let i = 0; i < dataX.length; i++) {
-          salvProMax.push(b)
+        salvProMax.push(b);
       }
       this.barChart.setOption({
         // backgroundColor: "#003366",
@@ -104,7 +105,7 @@ export default {
             name: "值",
             type: "bar",
             zlevel: 1,
-            barGap:"10%",
+            barGap: "10%",
             itemStyle: {
               normal: {
                 barBorderRadius: 30,
@@ -138,15 +139,20 @@ export default {
           },
         ],
       });
+    },
+    initChart() {
+      this.barChart = echarts.init(this.$refs.myChart, true);
+      this.setOptions(this.barData);
+      this.barChart.off("click");
+      // triggerEvent为true时，触发点击事件
+      if(this.barData.id == 'barChart' || this.barData.id == 'barChart1' ){
+        this.barChart.on("click", function (params) {
+          Bus.$emit("buTeiDesc", params.name,true);
+        });
+      }
       
     },
-    initChart(){
-      this.barChart = echarts.init(this.$refs.myChart,true);
-      this.setOptions(this.barData)
-    }
   },
-  
-  
 };
 </script>
 <style scoped>

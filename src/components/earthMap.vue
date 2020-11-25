@@ -235,7 +235,6 @@ export default {
         this.viewer.scene.canvas
       );
       handler.setInputAction(movement => {
-        console.log('earth',movement)
         const obj = this.viewer.scene.pick(movement.position);
         if (Cesium.defined(obj) && obj.id instanceof Cesium.Entity) {
           const model = obj.id;

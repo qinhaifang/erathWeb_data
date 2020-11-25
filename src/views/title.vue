@@ -11,7 +11,7 @@ export default {
 <style scoped>
   .title{
     height: 50px;
-    line-height: 39px;
+    line-height: 40px;
     padding-left: 15px;
     background: url('../assets/titleBackground.svg');
     background-repeat: no-repeat;
