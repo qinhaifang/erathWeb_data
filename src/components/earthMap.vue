@@ -1,6 +1,26 @@
 <template>
   <div class="map">
     <div id="cesium-earth"></div>
+    <el-dialog
+        :title="mapBoxTitle"
+        :visible.sync="mapBox"
+        destroy-on-close
+        :modal=false
+        width="20%"
+        class="mapBox"
+        >
+        <ul>
+          <li>
+            发放资金：<span>20</span>万元
+          </li>
+          <li>
+            发放人次：<span>20</span>人
+          </li>
+          <li>
+            补贴类型数量：<span>20</span>个
+          </li>
+        </ul>
+      </el-dialog>
   </div>
 </template>
 <script>
@@ -9,6 +29,8 @@ export default {
   data() {
     return {
       viewer: null,
+      mapBox:false,
+      mapBoxTitle:null,
       zoneObject: [
         {
           zoneName: "sx",
@@ -101,6 +123,13 @@ export default {
           height: 311615,
           name: "吕梁市"
         },
+        {
+          zoneName: "xiaoyi",
+          lon: 111.781568,
+          lat: 37.144474,
+          height: 311615,
+          name: "孝义市"
+        },
         
       ],
     };
@@ -114,9 +143,19 @@ export default {
       this.addFGPoint();
       // state ? this.addZoneBoundary(this.zoneObject[0]) : this.addZoneBoundary(this.zoneObject[1])
     })
-    // Bus.$on("zone-click-event",zoneName =>{
-      
-    // })
+    Bus.$on("zone-click-event",zoneName =>{
+      if (!zoneName) {
+        return;
+      }
+      Bus.$emit("clear-all-mark");
+      this.mapBox = true;
+      this.mapBoxTitle = zoneName
+      this.zoneLocation(zoneName);
+      console.log('获取到',zoneName)
+    }),
+    Bus.$on("clear-all-mark", () => {
+      this.clearZoneBoundary();
+    });
   },
   methods: {
     init() {
@@ -238,9 +277,11 @@ export default {
         const obj = this.viewer.scene.pick(movement.position);
         if (Cesium.defined(obj) && obj.id instanceof Cesium.Entity) {
           const model = obj.id;
+          console.log('名字',model,model.name,movement)
           Bus.$emit("zone-click-event", model.name);
         }
-      }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+      }, Cesium.ScreenSpaceEventType.LEFT_DOWN); 
+
     },
     //清除行政区划
     clearZoneBoundary() {
@@ -265,6 +306,18 @@ export default {
         // }
       });
     },
+    zoneLocation(zoneName) {
+      for (let i = 0; i < this.zoneObject.length; i++) {
+        if (this.zoneObject[i].name === zoneName) {
+          this.currentZoneObject = this.zoneObject[i];
+          break;
+        }
+      }
+      if (this.currentZoneObject) {
+        this.clearZoneBoundary();
+        this.addZoneBoundary(this.currentZoneObject);
+      }
+    },
   },
 };
 </script>
@@ -272,5 +325,8 @@ export default {
 .cesium-earth {
   width: 100%;
   height: 100%;
+}
+.mapBox ul li {
+  padding: 10px;
 }
 </style>

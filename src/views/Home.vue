@@ -35,6 +35,7 @@
       <div class="right">
         <title-box :title="titleBox3"></title-box>
         <el-select v-model="typeValue" class="selectInput" placeholder="请选择补贴类型" @change="selectType">
+          <el-option value="">全部</el-option>
           <el-option
             v-for="(item,index) in options"
             :key="index"
@@ -65,6 +66,7 @@
       <div class="top">
         <ul>
           <li v-for="(item,index) in totalData" :key="index" @click="alertBox(index)">
+            <img class="helpIcon" v-show="index == 4 || index ==5" src="../assets/icon.png" alt="">
             <span>{{item.name}}</span>
             <p class="p10" >
               <span>{{item.num}}</span>&nbsp;&nbsp;{{item.unit}}
@@ -295,7 +297,7 @@ export default {
     getRank(params){
       this.rankData = [];
       earthClient.getBonusRankData(params).then(response =>{
-        this.rankData = response.toObject().bonusResList.slice(0,5);
+        this.rankData = response.toObject().bonusResList;
       })
     },
     // 补贴类型
@@ -306,9 +308,10 @@ export default {
     },
     // 补贴类型选择
     selectType(value){
+      console.log(value)
       let earthReq = new StatisticalReq();
       earthReq.setStatisticalCode(this.adcode)
-      earthReq.setStatisticalYear(this.year)
+      earthReq.setStatisticalYear(this.year.substr(0,4))
       earthReq.setStatisticalType(value)
       this.getRank(earthReq)
     },
@@ -544,6 +547,7 @@ export default {
   .top ul li{
     width: 9%;
     float: left;
+    cursor: pointer;
   }
   .top ul li span{
     font-size: 18px;
@@ -583,6 +587,12 @@ export default {
   .boxUl li span:last-child{
     padding-top: 10px;
   }
+  .helpIcon{
+    width: 25px;
+    position: absolute;
+    margin-left: 4%;
+    margin-top: -11px;
+  }
 
   
 </style>
@@ -608,12 +618,20 @@ export default {
   }
   .el-table ,.el-table--fit ,.el-table th, .el-table tr{
     color: #fff;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0);
   }
-  .el-table tbody tr:hover>td { 
-    background-color:rgba(0, 0, 0, 0.1)!important
+  .el-table tbody tr:hover>td ,.el-table tbody tr>td{ 
+    background-color:rgba(0, 0, 0, 0)!important;
+    border-bottom:1px dashed #ccc;
+    
   }
   .el-table th:hover, .el-table tr:hover td{
     background:none;
+    border-bottom: none;
+  }
+  .mapBox .el-dialog{
+    position: absolute!important;
+    right: 20%;
+    top: 13%;
   }
 </style>
