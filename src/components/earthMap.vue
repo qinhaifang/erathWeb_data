@@ -27,6 +27,8 @@
 const layer = "http://220.181.130.171:9090/gisserver/tiles/mbtiles/Global_Image/{z}/{x}/{reverseY}.jpg";
 import {earthClient} from '@/api/public.js';
 import {StatisticalReq,DictRegionReq} from '@/api/earth/earth_message_pb.js'
+const { Empty } = require('@/api/google/protobuf/empty_pb');
+let empty = new Empty();
 export default {
   props:['params'],
   data() {
@@ -39,6 +41,7 @@ export default {
         totalCount:0,
         rebateType:0
       },
+      fgList:[],
       zoneObject: [
         {
           zoneName: "sx",
@@ -56,8 +59,8 @@ export default {
         },
         
       ],
-      year:new Date().getFullYear()
-     
+      year:new Date().getFullYear(),
+      areaJson:{}
     };
   },
   watch: {
@@ -68,10 +71,12 @@ export default {
   },
   mounted() {
     this.init();
+    this.getList();
     window.viewer = this.viewer;
     this.addLister(); //监听地球点击事件
     Bus.$on('flayToMap',()=>{
-      this.addZoneBoundary(this.zoneObject[0])
+      
+      setTimeout(this.addZoneBoundary(this.zoneObject[0]),5000)
       // this.addFGPoint();
     })
     Bus.$on("zone-click-event",zoneName =>{
@@ -131,11 +136,27 @@ export default {
     },
     // 加载行政边界
     addZoneBoundary(obj,isFly = true){
-      let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
-        stroke:Cesium.Color.YELLOW,
-        fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5),
-        strokeWidth:10
-      })
+      console.log('加载行政边界',obj)
+      // let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
+      //   stroke:Cesium.Color.YELLOW,
+      //   fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
+      //   strokeWidth:10
+      // })
+      let neighborhoodsPromise;
+      if(obj.zoneName === 'sx'){
+        neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
+          stroke:Cesium.Color.YELLOW,
+          fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
+          strokeWidth:10
+        })
+      }else{
+        neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
+          stroke:Cesium.Color.YELLOW,
+          fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
+          strokeWidth:10
+        })
+      }
+      
       neighborhoodsPromise.then(dataSource => {
         this.viewer.dataSources.add(dataSource);
         let neighborhoods = dataSource.entities;
@@ -151,18 +172,14 @@ export default {
             } else {
               labels[name] = name;
             }
-            if (
-              name === "孝义市" ||
-              name === "河曲县" ||
-              name === "朔城区" ||
-              name === "潞州区" ||
-              name === "古交市" ||
-              name === '矿区'
-            ) {
-              entity.polygon.material = Cesium.Color.fromCssColorString(
-                "#FF3C3C" //#FF3C3C ,#ff3300
-              ).withAlpha(0.7);
-            }
+            this.fgList.forEach(item => {
+              if (name === item.regionName) {
+                entity.polygon.material = Cesium.Color.fromCssColorString(
+                  "#FF3C3C" //#FF3C3C ,#ff3300
+                ).withAlpha(0.7);
+              }
+            });
+            
             var polyPositions = entity.polygon.hierarchy.getValue(
               Cesium.JulianDate.now()
             ).positions;
@@ -196,7 +213,7 @@ export default {
     flyTo(log,lat,height){
       this.viewer.camera.flyTo({
         destination:Cesium.Cartesian3.fromDegrees(log,lat,height),
-        duration:5.0
+        duration:3.0
       })
     },
     // 监听地球点击
@@ -210,20 +227,24 @@ export default {
           const model = obj.id;
           let dictReq = new DictRegionReq();
           dictReq.setRegionName(model.name)
-          console.log(111,this.year)
           earthClient.getRegionCodeByName(dictReq).then(response =>{
             var data = response.toObject();
             Bus.$emit("child-to-parent", data.regionCode);
             if(data.regionCode !== ''){
               let earthReq = new StatisticalReq();
               earthReq.setStatisticalCode(data.regionCode)
-              // earthReq.setStatisticalType('area')
               earthReq.setStatisticalYear(this.year+'')
+              let dictReq = new DictRegionReq();
+              dictReq.setRegionCode(data.regionCode)
+              // 获取地区json
+              earthClient.getCountyPayInfo(dictReq).then(response =>{
+                let data = response.toObject();
+                // this.areaJson = data.
+                console.log('json',response.toObject())
+              })
               // 点击县弹出详情
               earthClient.getBonusSituationDataList(earthReq).then(response =>{
                 let data = response.toObject();
-                
-                
                 console.log(earthReq.toObject(),data)
                 if(data.bonusResList.length > 0){
                   this.mapBoxData = data.bonusResList[0];
@@ -264,8 +285,7 @@ export default {
         // }
       });
     },
-    zoneLocation(zoneName) {
-      
+    zoneLocation(zoneName) { 
       for (let i = 0; i < this.zoneObject.length; i++) {
         if (this.zoneObject[i].name === zoneName) {
           this.currentZoneObject = this.zoneObject[i];
@@ -278,6 +298,12 @@ export default {
         this.addZoneBoundary(this.currentZoneObject);
       }
     },
+    getList(){
+      earthClient.getAllCoverCounty(empty).then(response =>{
+        this.fgList =response.toObject().dictRegionList;
+      })
+    },
+    
   },
 };
 </script>

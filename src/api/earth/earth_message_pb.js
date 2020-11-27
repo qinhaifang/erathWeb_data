@@ -1765,7 +1765,8 @@ proto.earth.DictRegion.toObject = function(includeInstance, msg) {
     depth: jspb.Message.getFieldWithDefault(msg, 6, 0),
     listOrder: jspb.Message.getFieldWithDefault(msg, 7, 0),
     enable: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
-    description: jspb.Message.getFieldWithDefault(msg, 9, "")
+    description: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    regionText: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -1837,6 +1838,10 @@ proto.earth.DictRegion.deserializeBinaryFromReader = function(msg, reader) {
     case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setDescription(value);
+      break;
+    case 10:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setRegionText(value);
       break;
     default:
       reader.skipField();
@@ -1927,6 +1932,13 @@ proto.earth.DictRegion.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       9,
+      f
+    );
+  }
+  f = message.getRegionText();
+  if (f.length > 0) {
+    writer.writeString(
+      10,
       f
     );
   }
@@ -2092,6 +2104,24 @@ proto.earth.DictRegion.prototype.getDescription = function() {
  */
 proto.earth.DictRegion.prototype.setDescription = function(value) {
   return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional string region_text = 10;
+ * @return {string}
+ */
+proto.earth.DictRegion.prototype.getRegionText = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.DictRegion} returns this
+ */
+proto.earth.DictRegion.prototype.setRegionText = function(value) {
+  return jspb.Message.setProto3StringField(this, 10, value);
 };
 
 

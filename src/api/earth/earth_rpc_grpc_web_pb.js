@@ -7,6 +7,10 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 
+/* eslint-disable */
+// @ts-nocheck
+
+
 
 const grpc = {};
 grpc.web = require('grpc-web');
@@ -136,7 +140,7 @@ proto.earth.EarthClient.prototype.getBonusSubsidyData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusResList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getBonusSubsidyData =
     function(request, metadata) {
@@ -216,7 +220,7 @@ proto.earth.EarthClient.prototype.getAreaBonusDetailData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.StatisticsDataRes>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getAreaBonusDetailData =
     function(request, metadata) {
@@ -296,7 +300,7 @@ proto.earth.EarthClient.prototype.getAreaSubsidyData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusResList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getAreaSubsidyData =
     function(request, metadata) {
@@ -376,7 +380,7 @@ proto.earth.EarthClient.prototype.getBonusDetailData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusResList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getBonusDetailData =
     function(request, metadata) {
@@ -456,7 +460,7 @@ proto.earth.EarthClient.prototype.getBonusSituationData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusRes>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getBonusSituationData =
     function(request, metadata) {
@@ -536,7 +540,7 @@ proto.earth.EarthClient.prototype.getBonusRankData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusResList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getBonusRankData =
     function(request, metadata) {
@@ -616,7 +620,7 @@ proto.earth.EarthClient.prototype.getRegionList =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.DictRegionList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getRegionList =
     function(request, metadata) {
@@ -696,7 +700,7 @@ proto.earth.EarthClient.prototype.getRebatesListByRegionCode =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusResList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getRebatesListByRegionCode =
     function(request, metadata) {
@@ -776,7 +780,7 @@ proto.earth.EarthClient.prototype.getGraphicStatistics =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.GraphicStatisticsResList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getGraphicStatistics =
     function(request, metadata) {
@@ -856,7 +860,7 @@ proto.earth.EarthClient.prototype.getStatisticsData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.StatisticsDataRes>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getStatisticsData =
     function(request, metadata) {
@@ -936,7 +940,7 @@ proto.earth.EarthClient.prototype.getBonusSituationDataList =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusResList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getBonusSituationDataList =
     function(request, metadata) {
@@ -1016,7 +1020,7 @@ proto.earth.EarthClient.prototype.getBonusSubsidyAllData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusResAllList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getBonusSubsidyAllData =
     function(request, metadata) {
@@ -1096,7 +1100,7 @@ proto.earth.EarthClient.prototype.getAreaSubsidyAllData =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.BonusResAllList>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getAreaSubsidyAllData =
     function(request, metadata) {
@@ -1176,7 +1180,7 @@ proto.earth.EarthClient.prototype.getRegionCodeByName =
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.earth.DictRegion>}
- *     A native promise that resolves to the response
+ *     Promise that resolves to the response
  */
 proto.earth.EarthPromiseClient.prototype.getRegionCodeByName =
     function(request, metadata) {
@@ -1185,6 +1189,166 @@ proto.earth.EarthPromiseClient.prototype.getRegionCodeByName =
       request,
       metadata || {},
       methodDescriptor_Earth_getRegionCodeByName);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.earth.DictRegionReq,
+ *   !proto.earth.DictRegionList>}
+ */
+const methodDescriptor_Earth_getAllCoverCounty = new grpc.web.MethodDescriptor(
+  '/earth.Earth/getAllCoverCounty',
+  grpc.web.MethodType.UNARY,
+  earth_message_pb.DictRegionReq,
+  earth_message_pb.DictRegionList,
+  /**
+   * @param {!proto.earth.DictRegionReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.DictRegionList.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.earth.DictRegionReq,
+ *   !proto.earth.DictRegionList>}
+ */
+const methodInfo_Earth_getAllCoverCounty = new grpc.web.AbstractClientBase.MethodInfo(
+  earth_message_pb.DictRegionList,
+  /**
+   * @param {!proto.earth.DictRegionReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.DictRegionList.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.earth.DictRegionReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.earth.DictRegionList)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.earth.DictRegionList>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.earth.EarthClient.prototype.getAllCoverCounty =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/earth.Earth/getAllCoverCounty',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getAllCoverCounty,
+      callback);
+};
+
+
+/**
+ * @param {!proto.earth.DictRegionReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.earth.DictRegionList>}
+ *     Promise that resolves to the response
+ */
+proto.earth.EarthPromiseClient.prototype.getAllCoverCounty =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/earth.Earth/getAllCoverCounty',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getAllCoverCounty);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.earth.DictRegionReq,
+ *   !proto.earth.DictRegion>}
+ */
+const methodDescriptor_Earth_getCountyPayInfo = new grpc.web.MethodDescriptor(
+  '/earth.Earth/getCountyPayInfo',
+  grpc.web.MethodType.UNARY,
+  earth_message_pb.DictRegionReq,
+  earth_message_pb.DictRegion,
+  /**
+   * @param {!proto.earth.DictRegionReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.DictRegion.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.earth.DictRegionReq,
+ *   !proto.earth.DictRegion>}
+ */
+const methodInfo_Earth_getCountyPayInfo = new grpc.web.AbstractClientBase.MethodInfo(
+  earth_message_pb.DictRegion,
+  /**
+   * @param {!proto.earth.DictRegionReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.DictRegion.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.earth.DictRegionReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.earth.DictRegion)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.earth.DictRegion>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.earth.EarthClient.prototype.getCountyPayInfo =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/earth.Earth/getCountyPayInfo',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getCountyPayInfo,
+      callback);
+};
+
+
+/**
+ * @param {!proto.earth.DictRegionReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.earth.DictRegion>}
+ *     Promise that resolves to the response
+ */
+proto.earth.EarthPromiseClient.prototype.getCountyPayInfo =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/earth.Earth/getCountyPayInfo',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getCountyPayInfo);
 };
 
 

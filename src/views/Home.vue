@@ -122,6 +122,7 @@ import BarChart from "../components/barChart"
 import BarCharts from "../components/barCharts"
 import {earthClient} from '@/api/public.js';
 import {StatisticalReq} from '@/api/earth/earth_message_pb.js'
+
 export default {
   components: {
     TitleBox,
@@ -375,6 +376,10 @@ export default {
       this.bar1.dataX = [];
       earthClient.getBonusSubsidyAllData(params).then(response =>{
         var data = response.toObject();
+        data.moneyResList.length <= 7 ? this.bar.height = '200px' : this.bar.height = '600px'
+        data.countResList.length <= 7 ? this.bar1.height = '200px' : this.bar1.height = '600px'
+        data.moneyResList.length <= 2 ? this.bar.height = '100px' : this.bar.height = '600px'
+        data.countResList.length <= 2 ? this.bar1.height = '100px' : this.bar1.height = '600px'
         data.moneyResList.forEach((item,index) =>{
           this.bar.dataY.push(item.rebateType)
           this.bar.dataX.push(Number(item.totalMoney))
@@ -394,8 +399,10 @@ export default {
         this.bar2.dataX = [];
         this.bar3.dataY = [];
         this.bar3.dataX = [];
-        data.moneyResList.length < 5 ? this.bar2.height = '200px' : this.bar2.height = '600px'
-        data.countResList.length < 5 ? this.bar3.height = '200px' : this.bar3.height = '600px'
+        data.moneyResList.length <= 5 ? this.bar2.height = '200px' : this.bar2.height = '400px'
+        data.countResList.length <= 5 ? this.bar3.height = '200px' : this.bar3.height = '400px'
+        data.moneyResList.length < 2 ? this.bar2.height = '100px' : this.bar2.height = '400px'
+        data.countResList.length < 2 ? this.bar3.height = '100px' : this.bar3.height = '400px'
         data.moneyResList.forEach((item,index) =>{
           this.bar2.dataY.push(item.areaName)
           this.bar2.dataX.push(Number(item.totalMoney))
