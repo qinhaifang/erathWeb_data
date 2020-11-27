@@ -11,26 +11,34 @@
         >
         <ul>
           <li>
-            发放资金：<span>20</span>万元
+            发放资金：<span>{{mapBoxData.totalMoney}}</span>万元
           </li>
           <li>
-            发放人次：<span>20</span>人
+            发放人次：<span>{{mapBoxData.totalCount}}</span>人
           </li>
           <li>
-            补贴类型数量：<span>20</span>个
+            补贴类型数量：<span>{{mapBoxData.rebateType}}</span>个
           </li>
         </ul>
-      </el-dialog>
+    </el-dialog>
   </div>
 </template>
 <script>
 const layer = "http://220.181.130.171:9090/gisserver/tiles/mbtiles/Global_Image/{z}/{x}/{reverseY}.jpg";
+import {earthClient} from '@/api/public.js';
+import {StatisticalReq,DictRegionReq} from '@/api/earth/earth_message_pb.js'
 export default {
+  props:['params'],
   data() {
     return {
       viewer: null,
       mapBox:false,
       mapBoxTitle:null,
+      mapBoxData:{
+        totalMoney:0,
+        totalCount:0,
+        rebateType:0
+      },
       zoneObject: [
         {
           zoneName: "sx",
@@ -38,90 +46,6 @@ export default {
           lat: 37.857014,
           height: 1314150,
           name: "山西省"
-        },
-        {
-          zoneName: "qg",
-          lon: 112.003,
-          lat: 30,
-          height: 10911680,
-          name: "全国"
-        },
-        {
-          zoneName: "taiyuan",
-          lon: 112.549248,
-          lat: 37.857014,
-          height: 169496,
-          name: "太原市"
-        },
-        {
-          zoneName: "datong",
-          lon: 113.295259,
-          lat: 40.09031,
-          height: 311615,
-          name: "大同市"
-        },
-        {
-          zoneName: "yangquan",
-          lon: 113.583285,
-          lat: 37.861188,
-          height: 311615,
-          name: "阳泉市"
-        },
-        {
-          zoneName: "changzhi",
-          lon: 113.113556,
-          lat: 36.191112,
-          height: 311615,
-          name: "长治市"
-        },
-        {
-          zoneName: "jincheng",
-          lon: 112.851274,
-          lat: 35.497553,
-          height: 311615,
-          name: "晋城市"
-        },
-        {
-          zoneName: "shuozhou",
-          lon: 112.43338,
-          lat: 39.331261,
-          height: 311615,
-          name: "朔州市"
-        },
-        {
-          zoneName: "jinzhong",
-          lon: 112.736465,
-          lat: 37.696495,
-          height: 311615,
-          name: "晋中市"
-        },
-        {
-          zoneName: "yuncheng",
-          lon: 111.003957,
-          lat: 35.022778,
-          height: 311615,
-          name: "运城市"
-        },
-        {
-          zoneName: "xinzhou",
-          lon: 112.733538,
-          lat: 38.41769,
-          height: 311615,
-          name: "忻州市"
-        },
-        {
-          zoneName: "linfen",
-          lon: 111.517973,
-          lat: 36.08415,
-          height: 311615,
-          name: "临汾市"
-        },
-        {
-          zoneName: "lvliang",
-          lon: 111.134335,
-          lat: 37.524366,
-          height: 311615,
-          name: "吕梁市"
         },
         {
           zoneName: "xiaoyi",
@@ -132,26 +56,32 @@ export default {
         },
         
       ],
+      year:new Date().getFullYear()
+     
     };
+  },
+  watch: {
+    params:function(newVal,oldVal){
+      this.year = newVal.year
+    },
+    deep:true
   },
   mounted() {
     this.init();
     window.viewer = this.viewer;
     this.addLister(); //监听地球点击事件
-    Bus.$on('aa',()=>{
+    Bus.$on('flayToMap',()=>{
       this.addZoneBoundary(this.zoneObject[0])
-      this.addFGPoint();
-      // state ? this.addZoneBoundary(this.zoneObject[0]) : this.addZoneBoundary(this.zoneObject[1])
+      // this.addFGPoint();
     })
     Bus.$on("zone-click-event",zoneName =>{
       if (!zoneName) {
         return;
       }
-      Bus.$emit("clear-all-mark");
+      // Bus.$emit("clear-all-mark");
       this.mapBox = true;
       this.mapBoxTitle = zoneName
       this.zoneLocation(zoneName);
-      console.log('获取到',zoneName)
     }),
     Bus.$on("clear-all-mark", () => {
       this.clearZoneBoundary();
@@ -226,7 +156,8 @@ export default {
               name === "河曲县" ||
               name === "朔城区" ||
               name === "潞州区" ||
-              name === "古交市"
+              name === "古交市" ||
+              name === '矿区'
             ) {
               entity.polygon.material = Cesium.Color.fromCssColorString(
                 "#FF3C3C" //#FF3C3C ,#ff3300
@@ -277,7 +208,35 @@ export default {
         const obj = this.viewer.scene.pick(movement.position);
         if (Cesium.defined(obj) && obj.id instanceof Cesium.Entity) {
           const model = obj.id;
-          console.log('名字',model,model.name,movement)
+          let dictReq = new DictRegionReq();
+          dictReq.setRegionName(model.name)
+          console.log(111,this.year)
+          earthClient.getRegionCodeByName(dictReq).then(response =>{
+            var data = response.toObject();
+            Bus.$emit("child-to-parent", data.regionCode);
+            if(data.regionCode !== ''){
+              let earthReq = new StatisticalReq();
+              earthReq.setStatisticalCode(data.regionCode)
+              // earthReq.setStatisticalType('area')
+              earthReq.setStatisticalYear(this.year+'')
+              // 点击县弹出详情
+              earthClient.getBonusSituationDataList(earthReq).then(response =>{
+                let data = response.toObject();
+                
+                
+                console.log(earthReq.toObject(),data)
+                if(data.bonusResList.length > 0){
+                  this.mapBoxData = data.bonusResList[0];
+                }else{
+                  this.mapBoxData = {
+                    totalMoney:0,
+                    totalCount:0,
+                    rebateType:0
+                  }
+                }
+              })
+            }
+          })
           Bus.$emit("zone-click-event", model.name);
         }
       }, Cesium.ScreenSpaceEventType.LEFT_DOWN); 
@@ -299,7 +258,6 @@ export default {
             pixelSize: 10
           });
         }
-        let pkxDataUrl = ["taiyuan", "lvliang", "yuncheng"];
         //添加面
         // for (let i = 0; i < pkxDataUrl.length; i++) {
         //   this.addPKXBoundary(pkxDataUrl[i]);
@@ -307,12 +265,14 @@ export default {
       });
     },
     zoneLocation(zoneName) {
+      
       for (let i = 0; i < this.zoneObject.length; i++) {
         if (this.zoneObject[i].name === zoneName) {
           this.currentZoneObject = this.zoneObject[i];
           break;
         }
       }
+      console.log('看看名字是否可以进去',zoneName,this.currentZoneObject)
       if (this.currentZoneObject) {
         this.clearZoneBoundary();
         this.addZoneBoundary(this.currentZoneObject);
@@ -326,7 +286,15 @@ export default {
   width: 100%;
   height: 100%;
 }
+.mapBox{
+  z-index: 0!important;
+}
 .mapBox ul li {
   padding: 10px;
+}
+</style>
+<style>
+.el-dialog__body{
+  padding-left: 0;
 }
 </style>

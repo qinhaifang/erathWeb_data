@@ -1,17 +1,18 @@
 <template>
   <div id="main">
-    <earth-map></earth-map>
+    <earth-map :params="paramsData"></earth-map>
     <header>
       <div class="datePicker">
         <el-date-picker v-model="year"  format="yyyy 年"
       value-format="yyyy" type="year" @blur="datePicker" placeholder="选择年">
       </el-date-picker>
       </div>
-      <div class="fr p10" style="position: relative;bottom: 20px;">
-        欢迎您登录 &nbsp;&nbsp;
-        <span><i class="el-icon-switch-button blue"></i></span>
+      <div class="fr p10" style="position: relative;bottom: 32px;">
+        <span style="padding-top:10px ">欢迎您登录 &nbsp;&nbsp;</span>
+        <img src="../assets/loginOut.svg" style="position: relative;top: 5px;" alt="">
       </div>
-      <h3 class="tc" @click="flayEarth()">{{ title }}</h3>
+      <h3 class="tc titleFont" @click="flayEarth()">{{ title }}</h3>
+      <img class="light" src="../assets/light.png" alt="">
     </header>
     <div class="container">
       <div class="left">
@@ -81,31 +82,32 @@
         width="40%">
         <ul class="boxUl">
           <li v-for="(item,index) in getAreaBonusDetail" :key="index">
-            <img src="../assets/loginOut.svg" alt="">
+            <img :src="require('../assets/icon'+index+'.svg')" alt="">
             <span>{{item.title}}</span>
             <span>{{item.value}}</span>
           </li>
           <div class="clear"></div>
         </ul>
-        <title-box style="background-size:inherit;margin-top:20px" :title="titleBox5"></title-box>
+        <!-- <title-box style="background-size:inherit;margin-top:20px" :title="titleBox5"></title-box> -->
+        <p class="boxTitle">区域发放情况 <img src="../assets/icon5.png" alt=""></p>
         <bar-charts v-if="descFlag" :barData="bar4"></bar-charts>
       </el-dialog>
       <el-dialog
         title="主管部门"
         :visible.sync="depBox"
         destroy-on-close
-        width="30%">
+        width="35%"  style="margin-top:4%">
         <el-table :data="depData" height="500px">
           <el-table-column property="name" label="主管部门" ></el-table-column>
           <el-table-column property="value" label="补贴类型数" width="120" align="center"></el-table-column>
-          <el-table-column property="totalCount" label="发放金额（万元）" width="150" align="center"></el-table-column>
+          <el-table-column property="totalCount" label="发放金额（万元）" width="150" align="right"></el-table-column>
         </el-table>
       </el-dialog>
       <el-dialog
         title="银行发放资金占比"
         :visible.sync="bankBox"
         destroy-on-close
-        width="20%">
+        width="20%" style="margin-top:8%">
         <pie-charts v-if="bankFlag" :pieData="pie2"></pie-charts>
       </el-dialog>
     </div>
@@ -131,7 +133,11 @@ export default {
   },
   data() {
     return {
-      year: '2020 年',
+      year: new Date().getFullYear()+' 年',
+      paramsData:{
+        year:new Date().getFullYear(),
+        adcode:'14'
+      },
       adcode:'14',
       type:'area', //bank  organ
       flag:false, //初始化为false,拿到数据为true
@@ -139,6 +145,7 @@ export default {
       fugai:false,
       descFlag:false,
       bankFlag:false,
+      flayTo:true,
       title: "惠民惠农财政补贴资金“一卡通”",
       titleBox1: "覆盖区域",
       titleBox2: "补贴发放",
@@ -163,14 +170,14 @@ export default {
       },
       bar:{
         id:"barChart",
-        height:'800px',
+        height:'600px',
         dataX:[],
         dataY:[],
         unit:'万元'
       },
       bar1:{
         id:"barChart1",
-        height:'800px',
+        height:'600px',
         dataX:[],
         dataY:[],
         unit:'个'
@@ -219,7 +226,6 @@ export default {
       depBox:false,
       depData: [],
       bankBox:false,
-
     };
   },
   watch:{
@@ -239,13 +245,46 @@ export default {
       this.subsidyList(earthReq);
       this.areaList(earthReq);
     },
+    adcode:function(newVal,oldVal){
+      let earthReq = new StatisticalReq();
+      earthReq.setStatisticalCode(this.adcode)
+      earthReq.setStatisticalYear(this.year.substr(0,4))
+      earthReq.setStatisticalType(this.type)
+      this.flag = false;
+      this.quyuFlag = false;
+      this.fugai = false;
+      this.descFlag = false;
+      this.coverArea(earthReq)
+      this.getTotal(earthReq);
+      this.getRank(earthReq);
+      this.getType(earthReq);
+      this.subsidyList(earthReq);
+      this.areaList(earthReq);
+    },
+    flayTo:function(value){
+      let earthReq = new StatisticalReq();
+      this.adcode = '14'
+      earthReq.setStatisticalCode(this.adcode)
+      earthReq.setStatisticalYear(this.year.substr(0,4))
+      earthReq.setStatisticalType(this.type)
+      this.flag = false;
+      this.quyuFlag = false;
+      this.fugai = false;
+      this.descFlag = false;
+      this.coverArea(earthReq)
+      this.getTotal(earthReq);
+      this.getRank(earthReq);
+      this.getType(earthReq);
+      this.subsidyList(earthReq);
+      this.areaList(earthReq);
+    }
+
   },
   mounted() {
     let earthReq = new StatisticalReq();
     earthReq.setStatisticalCode(this.adcode)
     earthReq.setStatisticalYear(this.year.substr(0,4))
     earthReq.setStatisticalType(this.type)
-    // earthReq.setStatisticalName(name)
 
     this.coverArea(earthReq)
     this.getTotal(earthReq);
@@ -259,14 +298,28 @@ export default {
       earthReq.setStatisticalType(name)
       this.getAreaBonusDetailData(earthReq)
       this.getAreaSubsidyData(earthReq)
+    }),
+    Bus.$on("child-to-parent",(code)=>{
+      this.adcode = code
+      earthReq.setStatisticalCode(code);
     })
   },
   methods: {
-    flayEarth(state){
-      Bus.$emit('aa')
+    flayEarth(){
+      if(this.flayTo){
+        Bus.$emit('flayToMap');
+        this.flayTo = false
+      }else{
+        Bus.$emit('flayToMap');
+        this.flayTo = true
+      }
+      
     },
     datePicker(value){
       this.year = value.picker.year + '年'
+      this.paramsData = {
+        year: value.picker.year
+      }
     },
     numFormat(num) {
       var c = (num.toString().indexOf ('.') !== -1) ? num.toLocaleString() : num.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
@@ -308,7 +361,6 @@ export default {
     },
     // 补贴类型选择
     selectType(value){
-      console.log(value)
       let earthReq = new StatisticalReq();
       earthReq.setStatisticalCode(this.adcode)
       earthReq.setStatisticalYear(this.year.substr(0,4))
@@ -459,17 +511,20 @@ export default {
     top: 0;
   }
   h3 {
-    font-family: 'alhyznh';
-    font-size: 28px;
-    letter-spacing: 4px;
+    font-family: 'Microsoft YaHei';
+    font-size: 32px;
+    /* letter-spacing: 4px; */
     padding-left: 9%;
+    font-weight: 700;
     /* color: antiquewhite; */
-    background: linear-gradient(to right, #2968E8, #72E6FF);
+    background: linear-gradient(to bottom, #72E6FF ,  #2968E8);
     -webkit-background-clip: text;
     color: transparent;
     cursor: pointer;
     position: relative;
     top: -20px;
+    left: 17%;
+    width: 50%;
   }
   .container{
     width: 100%;
@@ -480,20 +535,20 @@ export default {
     overflow: auto;
   }
   .left{
-    width: 320px;
+    width: 340px;
     height: 100%;
     /* background-color: rgba(55, 100, 171,.3); */
     background-color: rgba(0, 0, 0,.3);
     /* box-shadow: 2px 0px 28px 0px rgba(55, 100, 171,.8); */
     position: absolute;
-    top: 8%;
+    top: 7.6%;
     left: 0;
   }
   .right{
     width: 320px;
     height: 100%;
     position: absolute;
-    top: 8%;
+    top: 7.6%;
     right: 0;
     background-color: rgba(0, 0, 0,.3);
     /* background-color: rgba(55, 100, 171,.3); */
@@ -549,6 +604,9 @@ export default {
     float: left;
     cursor: pointer;
   }
+    .top ul li:nth-child(2){
+      width: 10%;
+    }
   .top ul li span{
     font-size: 18px;
     
@@ -568,13 +626,15 @@ export default {
   .datePicker{
     position: relative;
     top: 18%;
+    padding-left: 10px;
   }
   .boxUl li{
-    width: 20%;
+    width: 20.4%;
     padding: 10px;
     margin:0 5px;
     float: left;
-    border:1px solid #ffd66c;
+    background: rgba(255,255,255,0.1);
+    /* border:1px solid #ffd66c; */
     border-radius: 4px;
   }
   .boxUl li img{
@@ -593,7 +653,35 @@ export default {
     margin-left: 4%;
     margin-top: -11px;
   }
-
+  .boxTitle{
+    padding: 30px 0;
+    color: #ffab2b;
+    font-weight: 700;
+  }
+  .boxTitle img{
+    padding-left: 20px;
+  }
+  .light{
+    position: relative;
+    left: 45%;
+    top: -6px;
+    transform: translateX(-50%);
+    animation: topLight 4s infinite linear;
+    animation-direction: alternate;
+  }
+  @keyframes topLight {
+    0%{
+      opacity: 1;
+    }
+    50%{
+      margin-left: 105px;
+      opacity: 1;
+    }
+    100%{
+      margin-left: 205px;
+      opacity: 1;
+    }
+  }
   
 </style>
 <style>
@@ -608,10 +696,11 @@ export default {
     margin-left: 10px;
   }
   .el-dialog{
-    background: linear-gradient(90deg, rgba(41, 104, 232, 0.7) 0%, rgba(0, 210, 255, 0) 100%);
-    border: 1px solid #00B1FF;
+    background: linear-gradient(top, #00316D 0%, #004F8F 100%);
+    /* border: 1px solid #00B1FF; */
     border-radius: 4px;
     color: #fff;
+    padding: 0 25px;
   }
   .el-dialog__title,.el-dialog__body{
     color: #fff;
@@ -619,19 +708,41 @@ export default {
   .el-table ,.el-table--fit ,.el-table th, .el-table tr{
     color: #fff;
     background: rgba(0, 0, 0, 0);
+    border-bottom:1px dashed #ccc;
   }
   .el-table tbody tr:hover>td ,.el-table tbody tr>td{ 
     background-color:rgba(0, 0, 0, 0)!important;
     border-bottom:1px dashed #ccc;
-    
   }
-  .el-table th:hover, .el-table tr:hover td{
+  .el-table th:hover, .el-table tr:hover td,.el-table th,.el-table tr{
     background:none;
-    border-bottom: none;
+  }
+  .el-table th{
+    color: #ffab2b;
+    font-weight: 700;
   }
   .mapBox .el-dialog{
+    /* background: linear-gradient(90deg, rgba(41, 104, 232, 0.8) 0%, rgba(0, 79, 143, .6) 100%); */
     position: absolute!important;
     right: 20%;
     top: 13%;
+  }
+  .el-dialog__header{
+    height: 33px;
+    background: url('../assets/titleBackground.svg') no-repeat;
+    background-size: contain;
+    position: relative;
+    left: -25px;
+  }
+  .el-dialog__title{
+    position: relative;
+    top: -11px;
+    font-size: 16px;
+  }
+  .el-dialog__headerbtn{
+    right: -40px;
+  }
+  .el-dialog__headerbtn .el-dialog__close{
+    color: #fff;
   }
 </style>

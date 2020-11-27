@@ -1108,5 +1108,85 @@ proto.earth.EarthPromiseClient.prototype.getAreaSubsidyAllData =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.earth.DictRegionReq,
+ *   !proto.earth.DictRegion>}
+ */
+const methodDescriptor_Earth_getRegionCodeByName = new grpc.web.MethodDescriptor(
+  '/earth.Earth/getRegionCodeByName',
+  grpc.web.MethodType.UNARY,
+  earth_message_pb.DictRegionReq,
+  earth_message_pb.DictRegion,
+  /**
+   * @param {!proto.earth.DictRegionReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.DictRegion.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.earth.DictRegionReq,
+ *   !proto.earth.DictRegion>}
+ */
+const methodInfo_Earth_getRegionCodeByName = new grpc.web.AbstractClientBase.MethodInfo(
+  earth_message_pb.DictRegion,
+  /**
+   * @param {!proto.earth.DictRegionReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.DictRegion.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.earth.DictRegionReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.earth.DictRegion)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.earth.DictRegion>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.earth.EarthClient.prototype.getRegionCodeByName =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/earth.Earth/getRegionCodeByName',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getRegionCodeByName,
+      callback);
+};
+
+
+/**
+ * @param {!proto.earth.DictRegionReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.earth.DictRegion>}
+ *     A native promise that resolves to the response
+ */
+proto.earth.EarthPromiseClient.prototype.getRegionCodeByName =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/earth.Earth/getRegionCodeByName',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getRegionCodeByName);
+};
+
+
 module.exports = proto.earth;
 

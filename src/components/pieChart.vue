@@ -197,7 +197,7 @@ export default {
             }
           },
           data: [{
-            value: this.pieData.data2,
+            value: 100-this.pieData.data1,
             itemStyle: {
               normal: {
                 color: '#4897f6'

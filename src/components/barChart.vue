@@ -70,6 +70,7 @@ export default {
               show: true,
               textStyle: {
                 color: "#fff",
+                fontSize: "16",
               },
             },
             splitLine: {
@@ -94,7 +95,7 @@ export default {
             axisLabel: {
               textStyle: {
                 color: "#ffffff",
-                fontSize: "12",
+                fontSize: "16",
               },
             },
             data: dataX,
@@ -121,6 +122,7 @@ export default {
                 ]),
               },
             },
+            fontSize: "14",
             barWidth: 10,
             data: dataX,
           },

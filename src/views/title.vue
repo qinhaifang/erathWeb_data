@@ -16,6 +16,8 @@ export default {
     background: url('../assets/titleBackground.svg');
     background-repeat: no-repeat;
     background-size: cover;
+    font-size: 18px;
+    font-weight: 700;
     /* width: 80%;
     padding: 10px; */
   }

@@ -15,8 +15,8 @@ body{
   src: url("./font/alhyznh.ttf");
 }
 @font-face{
-  font-family: 'alhyznh';
-  src: url("./font/alhyznh.ttf");
+  font-family: 'al';
+  src: url("./font/ali.ttf");
 }
 .p10{
   padding: 10px;
