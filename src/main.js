@@ -19,11 +19,10 @@ import 'cesium/Source/Widgets/widgets.css'
 // import CesiumNavigation from "cesium-navigation-es6";
 
 Vue.prototype.Cesium=Cesium;
+import echarts from 'echarts'
+import axios from 'axios'
+Vue.prototype.$axios = axios;
 
-import echarts from "echarts";
-// Object.defineProperties(Vue.prototype,{
-//   $echarts:{get:() => echarts}
-// })
 
 Vue.use(ElementUI,echarts)
 

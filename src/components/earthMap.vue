@@ -49,15 +49,7 @@ export default {
           lat: 37.857014,
           height: 1314150,
           name: "山西省"
-        },
-        {
-          zoneName: "xiaoyi",
-          lon: 111.781568,
-          lat: 37.144474,
-          height: 311615,
-          name: "孝义市"
-        },
-        
+        }
       ],
       year:new Date().getFullYear(),
       areaJson:{}
@@ -91,6 +83,7 @@ export default {
     Bus.$on("clear-all-mark", () => {
       this.clearZoneBoundary();
     });
+    this.getZoneObject()
   },
   methods: {
     init() {
@@ -136,7 +129,6 @@ export default {
     },
     // 加载行政边界
     addZoneBoundary(obj,isFly = true){
-      console.log('加载行政边界',obj)
       // let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
       //   stroke:Cesium.Color.YELLOW,
       //   fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
@@ -239,13 +231,10 @@ export default {
               // 获取地区json
               earthClient.getCountyPayInfo(dictReq).then(response =>{
                 let data = response.toObject();
-                // this.areaJson = data.
-                console.log('json',response.toObject())
               })
               // 点击县弹出详情
               earthClient.getBonusSituationDataList(earthReq).then(response =>{
                 let data = response.toObject();
-                console.log(earthReq.toObject(),data)
                 if(data.bonusResList.length > 0){
                   this.mapBoxData = data.bonusResList[0];
                 }else{
@@ -292,7 +281,6 @@ export default {
           break;
         }
       }
-      console.log('看看名字是否可以进去',zoneName,this.currentZoneObject)
       if (this.currentZoneObject) {
         this.clearZoneBoundary();
         this.addZoneBoundary(this.currentZoneObject);
@@ -303,6 +291,29 @@ export default {
         this.fgList =response.toObject().dictRegionList;
       })
     },
+    getZoneObject(){
+      let num = 0;
+      this.$axios({
+        method:'get',
+        url:'../../static/data/sx.json',
+      }).then(res =>{
+        let data = res.data.features;
+        data.forEach((item,j) =>{
+          this.fgList.forEach((items,k) =>{
+            if(items.regionName === item.properties.name){
+              this.zoneObject.push({
+                zoneName: items.regionName,
+                lon: item.properties.center[0],
+                lat: item.properties.center[1],
+                height: 311615,
+                name: items.regionName
+              })
+            }
+          })
+          
+        })
+      })
+    }
     
   },
 };
