@@ -67,7 +67,7 @@
       <div class="top">
         <ul>
           <li v-for="(item,index) in totalData" :key="index" @click="alertBox(index)">
-            <img class="helpIcon" v-show="index == 4 || index ==5" src="../assets/icon.png" alt="">
+            <img class="helpIcon" v-show="index == 1 || index ==3" src="../assets/icon.png" alt="">
             <span>{{item.name}}</span>
             <p class="p10" >
               <span>{{item.num}}</span>&nbsp;&nbsp;{{item.unit}}
@@ -149,9 +149,9 @@ export default {
       flayTo:true,
       title: "惠民惠农财政补贴资金“一卡通”",
       titleBox1: "覆盖区域",
-      titleBox2: "补贴发放",
+      titleBox2: "补贴项目",
       titleBox3: "发放资金排行榜",
-      titleBox4: "区域发放",
+      titleBox4: "部门排行榜",
       titleBox5: "区域发放情况",
       total:0,  //覆盖区县
       activeName:"1",
@@ -210,11 +210,11 @@ export default {
       rankData:[],
       totalData:[
         {name:'覆盖区县',num:0,unit:'个'},
-        {name:'发放金额',num:0,unit:'万元'},
-        {name:'补贴类型',num:0,unit:'个'},
-        {name:'受益人口',num:0,unit:'人'},
-        {name:'代发银行',num:0,unit:'个'},
         {name:'主管部门',num:0,unit:'个'},
+        {name:'补贴项目',num:0,unit:'个'},
+        {name:'代发银行',num:0,unit:'个'},
+        {name:'受益人口',num:0,unit:'人'},
+        {name:'发放金额',num:0,unit:'万元'},
       ],
       buTieDesc:false,
       boxTitle:null,
@@ -257,7 +257,7 @@ export default {
       this.descFlag = false;
       this.coverArea(earthReq)
       this.getTotal(earthReq);
-      this.getRank(earthReq);
+      // this.getRank(earthReq);
       this.getType(earthReq);
       this.subsidyList(earthReq);
       this.areaList(earthReq);
@@ -279,7 +279,6 @@ export default {
       this.subsidyList(earthReq);
       this.areaList(earthReq);
     }
-
   },
   mounted() {
     let earthReq = new StatisticalReq();
@@ -334,15 +333,15 @@ export default {
           if(index == 0){
             item.num = data.coverArea
           }else if(index == 1){
-            item.num = data.totalMoney == '' ? 0 :data.totalMoney
+            item.num = data.totalOrgan
           }else if(index == 2){
             item.num = data.totalRebate    //totalRebate
           }else if(index == 3){
-            item.num = data.totalPerson
-          }else if(index == 4){
             item.num = data.totalBank
+          }else if(index == 4){
+            item.num = data.totalPerson
           }else if(index == 5){
-            item.num = data.totalOrgan
+            item.num = data.totalMoney == '' ? 0 :data.totalMoney
           }
         })
       })
@@ -467,7 +466,7 @@ export default {
       earthReq.setStatisticalCode(this.adcode)
       earthReq.setStatisticalYear(this.year.substr(0,4))
       
-      if(index == 4){
+      if(index == 3){
         this.bankBox = true
         earthReq.setStatisticalType('bank')
         earthClient.getGraphicStatistics(earthReq).then(response =>{
@@ -475,7 +474,7 @@ export default {
           this.pie2.data = data.graphicStatisticsList
           this.bankFlag = true;
         })
-      }else if(index == 5){
+      }else if(index == 1){
         this.depBox = true
         earthReq.setStatisticalType('organ')
         earthClient.getGraphicStatistics(earthReq).then(response =>{

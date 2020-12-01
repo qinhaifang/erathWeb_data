@@ -29,6 +29,7 @@ import {earthClient} from '@/api/public.js';
 import {StatisticalReq,DictRegionReq} from '@/api/earth/earth_message_pb.js'
 const { Empty } = require('@/api/google/protobuf/empty_pb');
 let empty = new Empty();
+// let i = Date.now()
 export default {
   props:['params'],
   data() {
@@ -52,7 +53,6 @@ export default {
         }
       ],
       year:new Date().getFullYear(),
-      areaJson:{}
     };
   },
   watch: {
@@ -66,8 +66,7 @@ export default {
     this.getList();
     window.viewer = this.viewer;
     this.addLister(); //监听地球点击事件
-    Bus.$on('flayToMap',()=>{
-      
+    Bus.$on('flayToMap',()=>{  
       setTimeout(this.addZoneBoundary(this.zoneObject[0]),5000)
       // this.addFGPoint();
     })
@@ -84,6 +83,7 @@ export default {
       this.clearZoneBoundary();
     });
     this.getZoneObject()
+    // this.rotate();
   },
   methods: {
     init() {
@@ -101,9 +101,11 @@ export default {
         animation: false, //动画控制,左下角方向盘
         shouldAnimate: true,
         timeline: false,
+        orderIndependentTranslucency: false,//去掉地球表面的大气效果的黑圈问题
         contextOptions: {
           webgl: {
-            preserveDrawingBuffer: true,
+            alpha:true,
+            // preserveDrawingBuffer: true,
           },
         },
         // imageryProvider: new Cesium.createTileMapServiceImageryProvider({
@@ -112,6 +114,8 @@ export default {
         // }),
       });
       this.viewer.cesiumWidget.creditContainer.style.display = "none";
+      this.viewer.scene.skyBox.show = true;
+      // this.viewer.scene.backgroundColor = new Cesium.Color( 0, 0, 0, 0);
       this.addImageLayer();
       this.viewer.camera.setView({
         destination:Cesium.Cartesian3.fromDegrees(108.8,35.5,22000000)
@@ -136,6 +140,7 @@ export default {
       // })
       let neighborhoodsPromise;
       if(obj.zoneName === 'sx'){
+        this.mapBox = false
         neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
           stroke:Cesium.Color.YELLOW,
           fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
@@ -159,11 +164,12 @@ export default {
           if (Cesium.defined(entity.polygon)) {
             //entity.name = entity.properties.name.getValue();
             let name = entity.properties.name.getValue();
-            if (labels[name]) {
-              continue;
-            } else {
-              labels[name] = name;
-            }
+            console.log('name',name)
+            // if (labels[name]) {
+            //   continue;
+            // } else {
+            //   labels[name] = name;
+            // }
             this.fgList.forEach(item => {
               if (name === item.regionName) {
                 entity.polygon.material = Cesium.Color.fromCssColorString(
@@ -229,9 +235,9 @@ export default {
               let dictReq = new DictRegionReq();
               dictReq.setRegionCode(data.regionCode)
               // 获取地区json
-              earthClient.getCountyPayInfo(dictReq).then(response =>{
-                let data = response.toObject();
-              })
+              // earthClient.getCountyPayInfo(dictReq).then(response =>{
+              //   let data = response.toObject();
+              // })
               // 点击县弹出详情
               earthClient.getBonusSituationDataList(earthReq).then(response =>{
                 let data = response.toObject();
@@ -274,7 +280,8 @@ export default {
         // }
       });
     },
-    zoneLocation(zoneName) { 
+    zoneLocation(zoneName) {
+      this.currentZoneObject = null;
       for (let i = 0; i < this.zoneObject.length; i++) {
         if (this.zoneObject[i].name === zoneName) {
           this.currentZoneObject = this.zoneObject[i];
@@ -285,10 +292,12 @@ export default {
         this.clearZoneBoundary();
         this.addZoneBoundary(this.currentZoneObject);
       }
+      console.log('zoneName',zoneName,this.currentZoneObject) 
     },
     getList(){
       earthClient.getAllCoverCounty(empty).then(response =>{
         this.fgList =response.toObject().dictRegionList;
+        console.log('覆盖点',this.fgList)
       })
     },
     getZoneObject(){
@@ -313,15 +322,23 @@ export default {
           
         })
       })
-    }
+    },
+    // rotate() {
+    //   var a = 0.01;
+    //   var t = Date.now();
+    //   var n = (t - i) / 1e3;
+    //   i = t
+    //   than.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -a * n);
+    // }
     
   },
 };
 </script>
 <style scoped>
-.cesium-earth {
+#cesium-earth {
   width: 100%;
   height: 100%;
+  /* background-image: url('../assets/fp_home_bg.jpg'); */
 }
 .mapBox{
   z-index: 0!important;
