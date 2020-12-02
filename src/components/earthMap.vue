@@ -29,7 +29,6 @@ import {earthClient} from '@/api/public.js';
 import {StatisticalReq,DictRegionReq} from '@/api/earth/earth_message_pb.js'
 const { Empty } = require('@/api/google/protobuf/empty_pb');
 let empty = new Empty();
-// let i = Date.now()
 export default {
   props:['params'],
   data() {
@@ -53,6 +52,7 @@ export default {
         }
       ],
       year:new Date().getFullYear(),
+      nameList:[]
     };
   },
   watch: {
@@ -67,8 +67,7 @@ export default {
     window.viewer = this.viewer;
     this.addLister(); //监听地球点击事件
     Bus.$on('flayToMap',()=>{  
-      setTimeout(this.addZoneBoundary(this.zoneObject[0]),5000)
-      // this.addFGPoint();
+      setTimeout(this.addZoneBoundary(this.zoneObject[0]),1000)
     })
     Bus.$on("zone-click-event",zoneName =>{
       if (!zoneName) {
@@ -83,7 +82,6 @@ export default {
       this.clearZoneBoundary();
     });
     this.getZoneObject()
-    // this.rotate();
   },
   methods: {
     init() {
@@ -114,12 +112,12 @@ export default {
         // }),
       });
       this.viewer.cesiumWidget.creditContainer.style.display = "none";
-      this.viewer.scene.skyBox.show = true;
-      // this.viewer.scene.backgroundColor = new Cesium.Color( 0, 0, 0, 0);
+      this.viewer.scene.skyBox.show = false;
+      this.viewer.scene.backgroundColor = new Cesium.Color( 0, 0, 0, 0);
       this.addImageLayer();
-      this.viewer.camera.setView({
-        destination:Cesium.Cartesian3.fromDegrees(108.8,35.5,22000000)
-      })
+      // this.viewer.camera.setView({
+      //   destination:Cesium.Cartesian3.fromDegrees(108.8,35.5,22000000)
+      // })
 
     },
     addImageLayer(){
@@ -144,7 +142,7 @@ export default {
         neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
           stroke:Cesium.Color.YELLOW,
           fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
-          strokeWidth:10
+          strokeWidth:10,
         })
       }else{
         neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
@@ -164,20 +162,18 @@ export default {
           if (Cesium.defined(entity.polygon)) {
             //entity.name = entity.properties.name.getValue();
             let name = entity.properties.name.getValue();
-            console.log('name',name)
-            // if (labels[name]) {
-            //   continue;
-            // } else {
-            //   labels[name] = name;
-            // }
+            if (labels[name]) {
+              continue;
+            } else {
+              labels[name] = name;
+            }
             this.fgList.forEach(item => {
               if (name === item.regionName) {
                 entity.polygon.material = Cesium.Color.fromCssColorString(
                   "#FF3C3C" //#FF3C3C ,#ff3300
-                ).withAlpha(0.7);
+                ).withAlpha(0.8);
               }
             });
-            
             var polyPositions = entity.polygon.hierarchy.getValue(
               Cesium.JulianDate.now()
             ).positions;
@@ -187,22 +183,42 @@ export default {
               polyCenter
             );
             entity.position = polyCenter;
-
-            entity.label = {
-              //创建一个标签，在中心点位置
-              text: name,
-              color: Cesium.Color.fromCssColorString("#000"),
-              font: "normal 26px MicroSoft YaHei",
-              showBackground: true,
-              scale: 0.5,
-              horizontalOrigin: Cesium.HorizontalOrigin.LEFT_CLICK,
-              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-              distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
-                10.0,
-                10000000.0
-              ),
-              disableDepthTestDistance: 10000000.0
-            };
+            if(this.nameList.length > 0 && this.nameList.indexOf(name) > -1){
+              entity.label = {
+                //创建一个标签，在中心点位置
+                text: name,
+                color: Cesium.Color.fromCssColorString("#000"),
+                font: "normal 26px MicroSoft YaHei",
+                showBackground: true,
+                scale: 0.5,
+                // scaleByDistance : new Cesium.NearFarScalar(1000, 2, 5000, .8),
+                horizontalOrigin: Cesium.HorizontalOrigin.LEFT_CLICK,
+                verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
+                  10.0,
+                  10000000.0
+                ),
+                disableDepthTestDistance: 10000000.0
+              };
+            }else{
+              entity.label = {
+                //创建一个标签，在中心点位置
+                text: '',
+                color: Cesium.Color.fromCssColorString("#000"),
+                font: "normal 20px MicroSoft YaHei",
+                showBackground: true,
+                scale: 0.5,
+                // scaleByDistance : new Cesium.NearFarScalar(1000, 2, 5000, .8),
+                horizontalOrigin: Cesium.HorizontalOrigin.LEFT_CLICK,
+                verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
+                  10.0,
+                  10000000.0
+                ),
+                disableDepthTestDistance: 10000000.0
+              };
+            }
+              
           }
         }
       });
@@ -262,24 +278,6 @@ export default {
     clearZoneBoundary() {
       this.viewer.dataSources.removeAll();
     },
-    addFGPoint() {
-      Cesium.GeoJsonDataSource.load("static/data/fg.json").then(dataSource => {
-        viewer.dataSources.add(dataSource);
-        var entities = dataSource.entities.values;
-        for (var i = 0; i < entities.length; i++) {
-          var entity = entities[i];
-          entity.billboard = undefined;
-          entity.point = new Cesium.PointGraphics({
-            color: Cesium.Color.RED,
-            pixelSize: 10
-          });
-        }
-        //添加面
-        // for (let i = 0; i < pkxDataUrl.length; i++) {
-        //   this.addPKXBoundary(pkxDataUrl[i]);
-        // }
-      });
-    },
     zoneLocation(zoneName) {
       this.currentZoneObject = null;
       for (let i = 0; i < this.zoneObject.length; i++) {
@@ -292,12 +290,15 @@ export default {
         this.clearZoneBoundary();
         this.addZoneBoundary(this.currentZoneObject);
       }
-      console.log('zoneName',zoneName,this.currentZoneObject) 
     },
+    // 获取覆盖区域
     getList(){
       earthClient.getAllCoverCounty(empty).then(response =>{
         this.fgList =response.toObject().dictRegionList;
-        console.log('覆盖点',this.fgList)
+        this.fgList.forEach(item=>{
+          this.nameList.push(item.regionName)
+        })
+        
       })
     },
     getZoneObject(){
@@ -322,15 +323,7 @@ export default {
           
         })
       })
-    },
-    // rotate() {
-    //   var a = 0.01;
-    //   var t = Date.now();
-    //   var n = (t - i) / 1e3;
-    //   i = t
-    //   than.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -a * n);
-    // }
-    
+    }
   },
 };
 </script>
@@ -338,7 +331,7 @@ export default {
 #cesium-earth {
   width: 100%;
   height: 100%;
-  /* background-image: url('../assets/fp_home_bg.jpg'); */
+  background-image: url('../assets/bg1.png');
 }
 .mapBox{
   z-index: 0!important;

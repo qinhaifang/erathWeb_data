@@ -415,8 +415,10 @@ export default {
     },
     // 覆盖区域
     coverArea(params){
+      console.log('参数',params.toObject())
       earthClient.getGraphicStatistics(params).then(response =>{
         var data = response.toObject();
+        console.log('覆盖区县',data)
         this.total = Number(data.graphicStatisticsList[0].value) + Number(data.graphicStatisticsList[1].value)
         data.graphicStatisticsList.forEach((item,index)=>{
           if(index == 0){
