@@ -8,6 +8,7 @@ const { EarthPromiseClient } = require('@/api/earth/earth_rpc_grpc_web_pb.js');
 const { OauthUnaryInterceptor,TokenUnaryInterceptor } = require('@/api/grpc_request');
 const oauthOpts = {'unaryInterceptors' : [new OauthUnaryInterceptor()]};
 // const tokenOpts = {'unaryInterceptors' : [new TokenUnaryInterceptor()]};
-const earthClient = new EarthPromiseClient('http://localhost:8199',null, oauthOpts); 
+const earthClient = new EarthPromiseClient('http://10.10.22.19:8010',null, oauthOpts); 
+// const earthClient = new EarthPromiseClient('http://localhost:8199',null, oauthOpts); 
 
 export {earthClient};

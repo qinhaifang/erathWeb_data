@@ -64,7 +64,7 @@ export default {
         // backgroundColor: '#fff',
         tooltip: {
             formatter: function (params) {
-                return '<span style="color: #fff;">综合得分：'+ 123 + '分</span>';
+                return '<span style="color: #fff;"></span>';
             }
         },
         title: [{

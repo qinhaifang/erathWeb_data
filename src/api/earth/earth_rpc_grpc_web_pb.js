@@ -475,86 +475,6 @@ proto.earth.EarthPromiseClient.prototype.getBonusSituationData =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.earth.StatisticalReq,
- *   !proto.earth.BonusResList>}
- */
-const methodDescriptor_Earth_getBonusRankData = new grpc.web.MethodDescriptor(
-  '/earth.Earth/getBonusRankData',
-  grpc.web.MethodType.UNARY,
-  earth_message_pb.StatisticalReq,
-  earth_message_pb.BonusResList,
-  /**
-   * @param {!proto.earth.StatisticalReq} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  earth_message_pb.BonusResList.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.earth.StatisticalReq,
- *   !proto.earth.BonusResList>}
- */
-const methodInfo_Earth_getBonusRankData = new grpc.web.AbstractClientBase.MethodInfo(
-  earth_message_pb.BonusResList,
-  /**
-   * @param {!proto.earth.StatisticalReq} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  earth_message_pb.BonusResList.deserializeBinary
-);
-
-
-/**
- * @param {!proto.earth.StatisticalReq} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.earth.BonusResList)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.earth.BonusResList>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.earth.EarthClient.prototype.getBonusRankData =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/earth.Earth/getBonusRankData',
-      request,
-      metadata || {},
-      methodDescriptor_Earth_getBonusRankData,
-      callback);
-};
-
-
-/**
- * @param {!proto.earth.StatisticalReq} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.earth.BonusResList>}
- *     Promise that resolves to the response
- */
-proto.earth.EarthPromiseClient.prototype.getBonusRankData =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/earth.Earth/getBonusRankData',
-      request,
-      metadata || {},
-      methodDescriptor_Earth_getBonusRankData);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
  *   !proto.earth.DictRegionReq,
  *   !proto.earth.DictRegionList>}
  */
@@ -796,86 +716,6 @@ proto.earth.EarthPromiseClient.prototype.getGraphicStatistics =
  * @const
  * @type {!grpc.web.MethodDescriptor<
  *   !proto.earth.StatisticalReq,
- *   !proto.earth.StatisticsDataRes>}
- */
-const methodDescriptor_Earth_getStatisticsData = new grpc.web.MethodDescriptor(
-  '/earth.Earth/getStatisticsData',
-  grpc.web.MethodType.UNARY,
-  earth_message_pb.StatisticalReq,
-  earth_message_pb.StatisticsDataRes,
-  /**
-   * @param {!proto.earth.StatisticalReq} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  earth_message_pb.StatisticsDataRes.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.earth.StatisticalReq,
- *   !proto.earth.StatisticsDataRes>}
- */
-const methodInfo_Earth_getStatisticsData = new grpc.web.AbstractClientBase.MethodInfo(
-  earth_message_pb.StatisticsDataRes,
-  /**
-   * @param {!proto.earth.StatisticalReq} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  earth_message_pb.StatisticsDataRes.deserializeBinary
-);
-
-
-/**
- * @param {!proto.earth.StatisticalReq} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.earth.StatisticsDataRes)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.earth.StatisticsDataRes>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.earth.EarthClient.prototype.getStatisticsData =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/earth.Earth/getStatisticsData',
-      request,
-      metadata || {},
-      methodDescriptor_Earth_getStatisticsData,
-      callback);
-};
-
-
-/**
- * @param {!proto.earth.StatisticalReq} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.earth.StatisticsDataRes>}
- *     Promise that resolves to the response
- */
-proto.earth.EarthPromiseClient.prototype.getStatisticsData =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/earth.Earth/getStatisticsData',
-      request,
-      metadata || {},
-      methodDescriptor_Earth_getStatisticsData);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.earth.StatisticalReq,
  *   !proto.earth.BonusResList>}
  */
 const methodDescriptor_Earth_getBonusSituationDataList = new grpc.web.MethodDescriptor(
@@ -949,6 +789,86 @@ proto.earth.EarthPromiseClient.prototype.getBonusSituationDataList =
       request,
       metadata || {},
       methodDescriptor_Earth_getBonusSituationDataList);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.earth.StatisticalReq,
+ *   !proto.earth.BonusResAllList>}
+ */
+const methodDescriptor_Earth_getAreaSubsidyAllData = new grpc.web.MethodDescriptor(
+  '/earth.Earth/getAreaSubsidyAllData',
+  grpc.web.MethodType.UNARY,
+  earth_message_pb.StatisticalReq,
+  earth_message_pb.BonusResAllList,
+  /**
+   * @param {!proto.earth.StatisticalReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.BonusResAllList.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.earth.StatisticalReq,
+ *   !proto.earth.BonusResAllList>}
+ */
+const methodInfo_Earth_getAreaSubsidyAllData = new grpc.web.AbstractClientBase.MethodInfo(
+  earth_message_pb.BonusResAllList,
+  /**
+   * @param {!proto.earth.StatisticalReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.BonusResAllList.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.earth.StatisticalReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.earth.BonusResAllList)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.earth.BonusResAllList>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.earth.EarthClient.prototype.getAreaSubsidyAllData =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/earth.Earth/getAreaSubsidyAllData',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getAreaSubsidyAllData,
+      callback);
+};
+
+
+/**
+ * @param {!proto.earth.StatisticalReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.earth.BonusResAllList>}
+ *     Promise that resolves to the response
+ */
+proto.earth.EarthPromiseClient.prototype.getAreaSubsidyAllData =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/earth.Earth/getAreaSubsidyAllData',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getAreaSubsidyAllData);
 };
 
 
@@ -1036,13 +956,13 @@ proto.earth.EarthPromiseClient.prototype.getBonusSubsidyAllData =
  * @const
  * @type {!grpc.web.MethodDescriptor<
  *   !proto.earth.StatisticalReq,
- *   !proto.earth.BonusResAllList>}
+ *   !proto.earth.StatisticsDataRes>}
  */
-const methodDescriptor_Earth_getAreaSubsidyAllData = new grpc.web.MethodDescriptor(
-  '/earth.Earth/getAreaSubsidyAllData',
+const methodDescriptor_Earth_getStatisticsData = new grpc.web.MethodDescriptor(
+  '/earth.Earth/getStatisticsData',
   grpc.web.MethodType.UNARY,
   earth_message_pb.StatisticalReq,
-  earth_message_pb.BonusResAllList,
+  earth_message_pb.StatisticsDataRes,
   /**
    * @param {!proto.earth.StatisticalReq} request
    * @return {!Uint8Array}
@@ -1050,7 +970,7 @@ const methodDescriptor_Earth_getAreaSubsidyAllData = new grpc.web.MethodDescript
   function(request) {
     return request.serializeBinary();
   },
-  earth_message_pb.BonusResAllList.deserializeBinary
+  earth_message_pb.StatisticsDataRes.deserializeBinary
 );
 
 
@@ -1058,10 +978,10 @@ const methodDescriptor_Earth_getAreaSubsidyAllData = new grpc.web.MethodDescript
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
  *   !proto.earth.StatisticalReq,
- *   !proto.earth.BonusResAllList>}
+ *   !proto.earth.StatisticsDataRes>}
  */
-const methodInfo_Earth_getAreaSubsidyAllData = new grpc.web.AbstractClientBase.MethodInfo(
-  earth_message_pb.BonusResAllList,
+const methodInfo_Earth_getStatisticsData = new grpc.web.AbstractClientBase.MethodInfo(
+  earth_message_pb.StatisticsDataRes,
   /**
    * @param {!proto.earth.StatisticalReq} request
    * @return {!Uint8Array}
@@ -1069,7 +989,7 @@ const methodInfo_Earth_getAreaSubsidyAllData = new grpc.web.AbstractClientBase.M
   function(request) {
     return request.serializeBinary();
   },
-  earth_message_pb.BonusResAllList.deserializeBinary
+  earth_message_pb.StatisticsDataRes.deserializeBinary
 );
 
 
@@ -1078,18 +998,18 @@ const methodInfo_Earth_getAreaSubsidyAllData = new grpc.web.AbstractClientBase.M
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.earth.BonusResAllList)}
+ * @param {function(?grpc.web.Error, ?proto.earth.StatisticsDataRes)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.earth.BonusResAllList>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.earth.StatisticsDataRes>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.earth.EarthClient.prototype.getAreaSubsidyAllData =
+proto.earth.EarthClient.prototype.getStatisticsData =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/earth.Earth/getAreaSubsidyAllData',
+      '/earth.Earth/getStatisticsData',
       request,
       metadata || {},
-      methodDescriptor_Earth_getAreaSubsidyAllData,
+      methodDescriptor_Earth_getStatisticsData,
       callback);
 };
 
@@ -1099,16 +1019,176 @@ proto.earth.EarthClient.prototype.getAreaSubsidyAllData =
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.earth.BonusResAllList>}
+ * @return {!Promise<!proto.earth.StatisticsDataRes>}
  *     Promise that resolves to the response
  */
-proto.earth.EarthPromiseClient.prototype.getAreaSubsidyAllData =
+proto.earth.EarthPromiseClient.prototype.getStatisticsData =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/earth.Earth/getAreaSubsidyAllData',
+      '/earth.Earth/getStatisticsData',
       request,
       metadata || {},
-      methodDescriptor_Earth_getAreaSubsidyAllData);
+      methodDescriptor_Earth_getStatisticsData);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.earth.StatisticalReq,
+ *   !proto.earth.BonusResList>}
+ */
+const methodDescriptor_Earth_getBonusRankData = new grpc.web.MethodDescriptor(
+  '/earth.Earth/getBonusRankData',
+  grpc.web.MethodType.UNARY,
+  earth_message_pb.StatisticalReq,
+  earth_message_pb.BonusResList,
+  /**
+   * @param {!proto.earth.StatisticalReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.BonusResList.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.earth.StatisticalReq,
+ *   !proto.earth.BonusResList>}
+ */
+const methodInfo_Earth_getBonusRankData = new grpc.web.AbstractClientBase.MethodInfo(
+  earth_message_pb.BonusResList,
+  /**
+   * @param {!proto.earth.StatisticalReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.BonusResList.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.earth.StatisticalReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.earth.BonusResList)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.earth.BonusResList>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.earth.EarthClient.prototype.getBonusRankData =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/earth.Earth/getBonusRankData',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getBonusRankData,
+      callback);
+};
+
+
+/**
+ * @param {!proto.earth.StatisticalReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.earth.BonusResList>}
+ *     Promise that resolves to the response
+ */
+proto.earth.EarthPromiseClient.prototype.getBonusRankData =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/earth.Earth/getBonusRankData',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getBonusRankData);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.earth.StatisticalReq,
+ *   !proto.earth.BonusResList>}
+ */
+const methodDescriptor_Earth_getOrganBonusRankData = new grpc.web.MethodDescriptor(
+  '/earth.Earth/getOrganBonusRankData',
+  grpc.web.MethodType.UNARY,
+  earth_message_pb.StatisticalReq,
+  earth_message_pb.BonusResList,
+  /**
+   * @param {!proto.earth.StatisticalReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.BonusResList.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.earth.StatisticalReq,
+ *   !proto.earth.BonusResList>}
+ */
+const methodInfo_Earth_getOrganBonusRankData = new grpc.web.AbstractClientBase.MethodInfo(
+  earth_message_pb.BonusResList,
+  /**
+   * @param {!proto.earth.StatisticalReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  earth_message_pb.BonusResList.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.earth.StatisticalReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.earth.BonusResList)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.earth.BonusResList>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.earth.EarthClient.prototype.getOrganBonusRankData =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/earth.Earth/getOrganBonusRankData',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getOrganBonusRankData,
+      callback);
+};
+
+
+/**
+ * @param {!proto.earth.StatisticalReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.earth.BonusResList>}
+ *     Promise that resolves to the response
+ */
+proto.earth.EarthPromiseClient.prototype.getOrganBonusRankData =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/earth.Earth/getOrganBonusRankData',
+      request,
+      metadata || {},
+      methodDescriptor_Earth_getOrganBonusRankData);
 };
 
 
@@ -1269,86 +1349,6 @@ proto.earth.EarthPromiseClient.prototype.getAllCoverCounty =
       request,
       metadata || {},
       methodDescriptor_Earth_getAllCoverCounty);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.earth.DictRegionReq,
- *   !proto.earth.DictRegion>}
- */
-const methodDescriptor_Earth_getCountyPayInfo = new grpc.web.MethodDescriptor(
-  '/earth.Earth/getCountyPayInfo',
-  grpc.web.MethodType.UNARY,
-  earth_message_pb.DictRegionReq,
-  earth_message_pb.DictRegion,
-  /**
-   * @param {!proto.earth.DictRegionReq} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  earth_message_pb.DictRegion.deserializeBinary
-);
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.earth.DictRegionReq,
- *   !proto.earth.DictRegion>}
- */
-const methodInfo_Earth_getCountyPayInfo = new grpc.web.AbstractClientBase.MethodInfo(
-  earth_message_pb.DictRegion,
-  /**
-   * @param {!proto.earth.DictRegionReq} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  earth_message_pb.DictRegion.deserializeBinary
-);
-
-
-/**
- * @param {!proto.earth.DictRegionReq} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.earth.DictRegion)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.earth.DictRegion>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.earth.EarthClient.prototype.getCountyPayInfo =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/earth.Earth/getCountyPayInfo',
-      request,
-      metadata || {},
-      methodDescriptor_Earth_getCountyPayInfo,
-      callback);
-};
-
-
-/**
- * @param {!proto.earth.DictRegionReq} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.earth.DictRegion>}
- *     Promise that resolves to the response
- */
-proto.earth.EarthPromiseClient.prototype.getCountyPayInfo =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/earth.Earth/getCountyPayInfo',
-      request,
-      metadata || {},
-      methodDescriptor_Earth_getCountyPayInfo);
 };
 
 

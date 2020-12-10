@@ -47,10 +47,13 @@ export default {
             fontFamily: 'PingFangSC-Regular,PingFang SC;',
           }
         },
-        color: ['#F0DE40', '#FF8122', '#95ea71', '#ea9b4f', '#7577df', '#be72d8', '#fff'],
+        color: ['#F0DE40', '#FF8122', '#4897f6', '#ea9b4f', '#7577df', '#be72d8', '#fff'],
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        grid:{
+          left:'10px'
         },
         series: [{
           name: '统计',

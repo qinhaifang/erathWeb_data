@@ -1,16 +1,16 @@
 <template>
   <div id="main">
-    <earth-map :params="paramsData"></earth-map>
+    <earth-map :params="paramsData" style="margin-top:94px"></earth-map>
     <header>
       <div class="datePicker">
         <el-date-picker v-model="year"  format="yyyy 年"
       value-format="yyyy" type="year" @blur="datePicker" placeholder="选择年">
       </el-date-picker>
       </div>
-      <div class="fr p10" style="position: relative;bottom: 32px;">
+      <!-- <div class="fr p10" style="position: relative;bottom: 32px;">
         <span style="padding-top:10px ">欢迎您登录 &nbsp;&nbsp;</span>
         <img src="../assets/loginOut.svg" style="position: relative;top: 5px;" alt="">
-      </div>
+      </div> -->
       <h3 class="tc titleFont" @click="flayEarth()">{{ title }}</h3>
       <img class="light" src="../assets/light.png" alt="">
     </header>
@@ -35,13 +35,13 @@
       </div>
       <div class="right">
         <title-box :title="titleBox3"></title-box>
-        <el-select v-model="typeValue" class="selectInput" placeholder="请选择补贴类型" @change="selectType">
+        <el-select v-model="typeValue" class="selectInput" placeholder="请选择补贴项目" @change="selectType">
           <el-option value="">全部</el-option>
           <el-option
             v-for="(item,index) in options"
             :key="index"
             :label="item.rebateType"
-            :value="item.rebateType">
+            :value="item.rebateId">
           </el-option>
         </el-select>
         <div class="rank">
@@ -49,20 +49,30 @@
             <li v-for="(item,index) in rankData" :key="index">
               <span :class="{color1:index==0,color2:index==1,color3:index==2}">{{index+1}}</span>
               <span>{{item.areaName}}</span>
-              <span>{{item.totalMoney}}万元</span>
               <span>{{item.totalCount}} 笔</span>
+              <span>{{item.totalMoney}}万元</span>
             </li>
           </ul>
         </div>
         <title-box :title="titleBox4"></title-box>
-        <el-tabs v-model="activeNameArea" type="card" @tab-click="handleClickArea">
+        <!-- <el-tabs v-model="activeNameArea" type="card" @tab-click="handleClickArea">
           <el-tab-pane label="发放资金" name="1" :key='activeNameArea'>
             <bar-chart v-if="quyuFlag"  :barData="bar2"></bar-chart>
           </el-tab-pane>
           <el-tab-pane label="发放人次" name="2" :key='activeNameArea+"1"'>
             <bar-chart :barData="bar3" ></bar-chart>
           </el-tab-pane>
-        </el-tabs>
+        </el-tabs> -->
+        <div class="dep">
+          <ul>
+            <li v-for="(item,index) in depList" :key="index">
+              <span :class="{color1:index==0,color2:index==1,color3:index==2}">{{index+1}}</span>
+              <span>{{item.organName.substr(0,4)}}</span>
+              <span>{{item.totalCount}} 笔</span>
+              <span>{{item.totalMoney}}万元</span>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="top">
         <ul>
@@ -79,7 +89,7 @@
         :title="boxTitle"
         :visible.sync="buTieDesc"
         destroy-on-close
-        width="40%">
+        width="42%" style="margin-top:4%">
         <ul class="boxUl">
           <li v-for="(item,index) in getAreaBonusDetail" :key="index">
             <img :src="require('../assets/icon'+index+'.svg')" alt="">
@@ -99,15 +109,15 @@
         width="35%"  style="margin-top:4%">
         <el-table :data="depData" height="500px">
           <el-table-column property="name" label="主管部门" ></el-table-column>
-          <el-table-column property="value" label="补贴类型数" width="120" align="center"></el-table-column>
-          <el-table-column property="totalCount" label="发放金额（万元）" width="150" align="right"></el-table-column>
+          <el-table-column property="value" label="补贴项目数" width="120" align="center"></el-table-column>
+          <el-table-column property="totalCount" label="发放资金（万元）" width="150" align="right"></el-table-column>
         </el-table>
       </el-dialog>
       <el-dialog
         title="银行发放资金占比"
         :visible.sync="bankBox"
         destroy-on-close
-        width="20%" style="margin-top:8%">
+        width="22%" style="margin-top:8%">
         <pie-charts v-if="bankFlag" :pieData="pie2"></pie-charts>
       </el-dialog>
     </div>
@@ -141,6 +151,7 @@ export default {
       },
       adcode:'14',
       type:'area', //bank  organ
+      rebateId:'',
       flag:false, //初始化为false,拿到数据为true
       quyuFlag:false,
       fugai:false,
@@ -174,6 +185,7 @@ export default {
         height:'600px',
         dataX:[],
         dataY:[],
+        rebateIds:[],
         unit:'万元'
       },
       bar1:{
@@ -219,14 +231,16 @@ export default {
       buTieDesc:false,
       boxTitle:null,
       getAreaBonusDetail:[  //补贴发放详情头部
-        {title:'发放资金',value:0},
-        {title:'发放人次',value:0},
         {title:'覆盖区县',value:0},
-        {title:'发放笔数',value:0}
+        {title:'发放人次',value:0},
+        {title:'发放笔数',value:0},
+        {title:'发放资金',value:0}
       ],
       depBox:false,
       depData: [],
       bankBox:false,
+      depList:[],
+      subsidyListId:[]
     };
   },
   watch:{
@@ -235,6 +249,7 @@ export default {
       earthReq.setStatisticalCode(this.adcode)
       earthReq.setStatisticalYear(this.year.substr(0,4))
       earthReq.setStatisticalType(this.type)
+      earthReq.setStatisticalId(this.rebateId)
       this.flag = false;
       this.quyuFlag = false;
       this.fugai = false;
@@ -245,6 +260,7 @@ export default {
       this.getType(earthReq);
       this.subsidyList(earthReq);
       this.areaList(earthReq);
+      this.getDepList(earthReq)
     },
     adcode:function(newVal,oldVal){
       let earthReq = new StatisticalReq();
@@ -253,14 +269,15 @@ export default {
       earthReq.setStatisticalType(this.type)
       this.flag = false;
       this.quyuFlag = false;
-      this.fugai = false;
+      // this.fugai = false;
       this.descFlag = false;
-      this.coverArea(earthReq)
+      // this.coverArea(earthReq)
       this.getTotal(earthReq);
       // this.getRank(earthReq);
       this.getType(earthReq);
       this.subsidyList(earthReq);
       this.areaList(earthReq);
+      this.getDepList(earthReq)
     },
     flayTo:function(value){
       let earthReq = new StatisticalReq();
@@ -270,14 +287,15 @@ export default {
       earthReq.setStatisticalType(this.type)
       this.flag = false;
       this.quyuFlag = false;
-      this.fugai = false;
+      // this.fugai = false;
       this.descFlag = false;
       this.coverArea(earthReq)
       this.getTotal(earthReq);
-      this.getRank(earthReq);
+      // this.getRank(earthReq);
       this.getType(earthReq);
       this.subsidyList(earthReq);
       this.areaList(earthReq);
+      this.getDepList(earthReq);
     }
   },
   mounted() {
@@ -285,6 +303,7 @@ export default {
     earthReq.setStatisticalCode(this.adcode)
     earthReq.setStatisticalYear(this.year.substr(0,4))
     earthReq.setStatisticalType(this.type)
+    earthReq.setStatisticalId(this.rebateId)
 
     this.coverArea(earthReq)
     this.getTotal(earthReq);
@@ -292,10 +311,13 @@ export default {
     this.getType(earthReq);
     this.subsidyList(earthReq);
     this.areaList(earthReq);
-    Bus.$on('buTeiDesc',(name,state)=>{
+    this.getDepList(earthReq);
+
+    Bus.$on('buTeiDesc',(name,index,state)=>{
       this.buTieDesc = state;
       this.boxTitle = name;
-      earthReq.setStatisticalType(name)
+      this.rebateId = this.subsidyListId[index].rebateId
+      earthReq.setStatisticalId(this.rebateId)
       this.getAreaBonusDetailData(earthReq)
       this.getAreaSubsidyData(earthReq)
     }),
@@ -306,14 +328,8 @@ export default {
   },
   methods: {
     flayEarth(){
-      if(this.flayTo){
-        Bus.$emit('flayToMap');
-        this.flayTo = false
-      }else{
-        Bus.$emit('flayToMap');
-        this.flayTo = true
-      }
-      
+      Bus.$emit('flayToMap');
+      this.flayTo = !this.flayTo
     },
     datePicker(value){
       this.year = value.picker.year + '年'
@@ -351,6 +367,7 @@ export default {
       this.rankData = [];
       earthClient.getBonusRankData(params).then(response =>{
         this.rankData = response.toObject().bonusResList;
+
       })
     },
     // 补贴类型
@@ -361,38 +378,41 @@ export default {
     },
     // 补贴类型选择
     selectType(value){
+      this.rebateId = value
       let earthReq = new StatisticalReq();
       earthReq.setStatisticalCode(this.adcode)
       earthReq.setStatisticalYear(this.year.substr(0,4))
-      earthReq.setStatisticalType(value)
+      earthReq.setStatisticalId(value)
       this.getRank(earthReq)
     },
     // 补贴发放
     subsidyList(params){
-      this.bar.dataY = [];
-      this.bar.dataX = [];
-      this.bar1.dataY = [];
-      this.bar1.dataX = [];
       earthClient.getBonusSubsidyAllData(params).then(response =>{
         var data = response.toObject();
-        data.moneyResList.length <= 7 ? this.bar.height = '200px' : this.bar.height = '600px'
-        data.countResList.length <= 7 ? this.bar1.height = '200px' : this.bar1.height = '600px'
-        data.moneyResList.length <= 2 ? this.bar.height = '100px' : this.bar.height = '600px'
-        data.countResList.length <= 2 ? this.bar1.height = '100px' : this.bar1.height = '600px'
+        data.moneyResList.length > 4 ? this.bar.height = '600px' : this.bar.height = '200px'
+        data.countResList.length > 4 ? this.bar1.height = '600px' : this.bar1.height = '200px'
+        this.bar.dataY=[];
+        this.bar.dataX = [];
+        this.bar1.dataY = [];
+        this.bar1.dataX = [];
         data.moneyResList.forEach((item,index) =>{
           this.bar.dataY.push(item.rebateType)
           this.bar.dataX.push(Number(item.totalMoney))
+          this.bar.rebateIds.push(item.rebateId)
         })
         data.countResList.forEach((item,index) =>{
           this.bar1.dataY.push(item.rebateType)
           this.bar1.dataX.push(Number(item.totalCount))
         })
+        this.subsidyListId = data.moneyResList
+        this.$forceUpdate();
         this.flag = true;
       })
     },
     // 区域发放
     areaList(params){
       earthClient.getAreaSubsidyAllData(params).then(response =>{
+        this.quyuFlag = true;
         var data = response.toObject();
         this.bar2.dataY = [];
         this.bar2.dataX = [];
@@ -410,15 +430,13 @@ export default {
           this.bar3.dataY.push(item.areaName)
           this.bar3.dataX.push(Number(item.totalCount))
         })
-        this.quyuFlag = true;
+        
       })
     },
     // 覆盖区域
     coverArea(params){
-      console.log('参数',params.toObject())
       earthClient.getGraphicStatistics(params).then(response =>{
         var data = response.toObject();
-        console.log('覆盖区县',data)
         this.total = Number(data.graphicStatisticsList[0].value) + Number(data.graphicStatisticsList[1].value)
         data.graphicStatisticsList.forEach((item,index)=>{
           if(index == 0){
@@ -434,14 +452,13 @@ export default {
     },
     // 补贴发放详情头部
     getAreaBonusDetailData(params){
-      console.log(params.toObject())
       earthClient.getAreaBonusDetailData(params).then(response =>{
         let data = response.toObject();
         this.getAreaBonusDetail = [  //补贴发放详情头部
-          {title:'发放资金',value:data.totalMoney},
-          {title:'发放人次',value:data.totalPerson},
-          {title:'覆盖区县',value:data.coverArea},
-          {title:'发放笔数',value:data.totalRebate}
+          {title:'覆盖区县(个)',value:data.coverArea},
+          {title:'发放人次(个)',value:data.totalPerson},
+          {title:'发放笔数(笔)',value:data.totalRebate},
+          {title:'发放资金(万元)',value:data.totalMoney},
         ]
       })
     },
@@ -459,8 +476,6 @@ export default {
           this.bar4.dataX.push(item.totalMoney)
           this.bar4.dataZ.push(item.totalCount)
         })
-        console.log(111,this.bar4)
-        
       })
     }, 
     alertBox(index){
@@ -486,6 +501,12 @@ export default {
       }
      
     } ,
+    // 部门排行榜
+    getDepList(params){
+      earthClient.getOrganBonusRankData(params).then(response =>{
+        this.depList = response.toObject().bonusResList;
+      })
+    },
     // 补贴发放列表
     handleClick(tab, event) {
       // console.log(111,tab.name);
@@ -496,6 +517,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
   .p10{
     padding: 10px;
@@ -517,6 +539,7 @@ export default {
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 2;
   }
   h3 {
     font-family: 'Microsoft YaHei';
@@ -543,25 +566,28 @@ export default {
     overflow: auto;
   }
   .left{
-    width: 340px;
+    /* width: 340px; */
+    width: 18%;
     height: 100%;
-    /* background-color: rgba(55, 100, 171,.3); */
-    background-color: rgba(0, 0, 0,.3);
+    background: rgb(10, 30, 60);
+    /* background-color: rgba(0, 0, 0,.3); */
     /* box-shadow: 2px 0px 28px 0px rgba(55, 100, 171,.8); */
     position: absolute;
-    top: 7.6%;
+    top: -2%;
     left: 0;
   }
   .right{
-    width: 320px;
+    /* width: 320px; */
+    width: 17%;
     height: 100%;
     position: absolute;
-    top: 7.6%;
+    top: -2%;
     right: 0;
-    background-color: rgba(0, 0, 0,.3);
+    background: rgb(10, 30, 60);
+    /* background-color: rgba(0, 0, 0,.3); */
     /* background-color: rgba(55, 100, 171,.3); */
   }
-  .rank ul li{
+  .rank ul li,.dep ul li{
     padding: 0 10px;
     height: 35px;
     line-height: 35px;
@@ -570,21 +596,25 @@ export default {
   }
   .color1{
     background: #FF3C3C;
-    border: 1px solid #BC0000;
+    /* border: 1px solid #BC0000; */
   }
   .color2{
     background: #FF8122;
-    border: 1px solid #E3861C;
+    /* border: 1px solid #E3861C; */
   }
   .color3{
     background: #F0DE40;
-    border: 1px solid #FFBB52;
+    /* border: 1px solid #FFBB52; */
   }
   .rank{
     height: 230px;
     overflow: auto;
   }
-  .rank ul li span:first-child{
+   .dep{
+    height: 480px;
+    overflow: auto;
+  }
+  .rank ul li span:first-child,.dep ul li span:first-child{
     display: inline-block;
     width: 22px;
     height: 22px;
@@ -592,29 +622,39 @@ export default {
     line-height: 22px;
     border-radius: 50%;
   }
-  .rank ul li span:not(:first-child){
+  .rank ul li span:nth-child(2),.dep ul li span:nth-child(2){
+    display: block;
+    width: 76px;
+    padding-left: 4px;
+    text-align: left;
+  }
+  .rank ul li span:nth-child(3),.dep ul li span:nth-child(3){
+    width: 50px;
+  }
+  .rank ul li span:not(:first-child),.dep ul li span:not(:first-child){
     display: inline-block;
-    text-align: center;
-    padding: 0 8px;
   }
   .top{
-    width: 100%;
+    width: 65.6%;
     position:absolute;
-    top: 14%;
-    left: 400px;
+    top: -2%;
+    left: 18%;
+    background: rgb(10, 30, 60);
+    padding-top: 25px;
   }
   .top ul{
     width: 100%;
     text-align: center;
   }
   .top ul li{
-    width: 9%;
+    width: 15%;
     float: left;
     cursor: pointer;
+    padding: 20px 10px ;
   }
-    .top ul li:nth-child(2){
+    /* .top ul li:nth-child(2){
       width: 10%;
-    }
+    } */
   .top ul li span{
     font-size: 18px;
     
@@ -622,6 +662,7 @@ export default {
   .top ul li p{
     color: rgba(255, 214, 108, 1);
   }
+
   .top ul li p span{
     display: inline-block;
     font-size: 40px!important;
@@ -637,7 +678,7 @@ export default {
     padding-left: 10px;
   }
   .boxUl li{
-    width: 20.4%;
+    width: 20.5%;
     padding: 10px;
     margin:0 5px;
     float: left;
@@ -651,6 +692,7 @@ export default {
   .boxUl li span{
     padding-left: 50px;
     display: block;
+    color: #fff;
   }
   .boxUl li span:last-child{
     padding-top: 10px;
@@ -658,7 +700,7 @@ export default {
   .helpIcon{
     width: 25px;
     position: absolute;
-    margin-left: 4%;
+    margin-left: 7%;
     margin-top: -11px;
   }
   .boxTitle{
@@ -693,18 +735,21 @@ export default {
   
 </style>
 <style>
+  .el-select{
+    z-index: 10;
+  }
   .el-input__inner{
-    background: rgba(0, 66, 142, 0.5);
+    background: rgba(0, 66, 142, 0.5)!important;
     border: 1px solid #00B1FF;
     border-radius: 4px;
-    color: #fff;
+    color: #fff!important;
   }
   .selectInput .el-input__inner{
     width: 300px;
     margin-left: 10px;
   }
   .el-dialog{
-    background: linear-gradient(top, #00316D 0%, #004F8F 100%);
+    background: linear-gradient(top, #00316D 0%, #004F8F 100%)!important;;
     /* border: 1px solid #00B1FF; */
     border-radius: 4px;
     color: #fff;
@@ -715,7 +760,7 @@ export default {
   }
   .el-table ,.el-table--fit ,.el-table th, .el-table tr{
     color: #fff;
-    background: rgba(0, 0, 0, 0);
+    background: rgba(0, 0, 0, 0)!important;
     border-bottom:1px dashed #ccc;
   }
   .el-table tbody tr:hover>td ,.el-table tbody tr>td{ 
@@ -723,7 +768,7 @@ export default {
     border-bottom:1px dashed #ccc;
   }
   .el-table th:hover, .el-table tr:hover td,.el-table th,.el-table tr{
-    background:none;
+    background:none!important;
   }
   .el-table th{
     color: #ffab2b;
@@ -746,11 +791,13 @@ export default {
     position: relative;
     top: -11px;
     font-size: 16px;
+    color: #FFF!important;
   }
   .el-dialog__headerbtn{
-    right: -40px;
+    right: -34px!important;
   }
   .el-dialog__headerbtn .el-dialog__close{
     color: #fff;
   }
 </style>
+

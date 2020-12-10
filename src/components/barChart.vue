@@ -34,6 +34,10 @@ export default {
   },
   methods: {
     setOptions({ dataX, dataY, unit } = {}) {
+      var dataXs = []
+      if(dataX){
+        dataXs = dataX
+      }
       var salvProMax = []; //背景按最大值
       let a = dataX;
       let b = Math.max(...a);
@@ -149,7 +153,8 @@ export default {
       // triggerEvent为true时，触发点击事件
       if(this.barData.id == 'barChart' || this.barData.id == 'barChart1' ){
         this.barChart.on("click", function (params) {
-          Bus.$emit("buTeiDesc", params.name,true);
+          console.log('点击echarts',params,this.barData)
+          Bus.$emit("buTeiDesc", params.name,params.dataIndex,true);
         });
       }
       

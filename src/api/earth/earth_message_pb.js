@@ -268,7 +268,8 @@ proto.earth.StatisticalReq.toObject = function(includeInstance, msg) {
     statisticalYear: jspb.Message.getFieldWithDefault(msg, 2, ""),
     statisticalType: jspb.Message.getFieldWithDefault(msg, 3, ""),
     statisticalName: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    statisticalOrgan: jspb.Message.getFieldWithDefault(msg, 5, "")
+    statisticalOrgan: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    statisticalId: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -324,6 +325,10 @@ proto.earth.StatisticalReq.deserializeBinaryFromReader = function(msg, reader) {
     case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.setStatisticalOrgan(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setStatisticalId(value);
       break;
     default:
       reader.skipField();
@@ -386,6 +391,13 @@ proto.earth.StatisticalReq.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       5,
+      f
+    );
+  }
+  f = message.getStatisticalId();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
       f
     );
   }
@@ -479,6 +491,24 @@ proto.earth.StatisticalReq.prototype.getStatisticalOrgan = function() {
  */
 proto.earth.StatisticalReq.prototype.setStatisticalOrgan = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional string statistical_id = 6;
+ * @return {string}
+ */
+proto.earth.StatisticalReq.prototype.getStatisticalId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.StatisticalReq} returns this
+ */
+proto.earth.StatisticalReq.prototype.setStatisticalId = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
@@ -885,10 +915,13 @@ proto.earth.BonusRes.prototype.toObject = function(opt_includeInstance) {
 proto.earth.BonusRes.toObject = function(includeInstance, msg) {
   var f, obj = {
     rebateType: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    totalMoney: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    totalCount: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    areaName: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    coverArea: jspb.Message.getFieldWithDefault(msg, 5, "")
+    rebateId: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    totalMoney: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    totalCount: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    areaName: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    coverArea: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    organName: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    organId: jspb.Message.getFieldWithDefault(msg, 8, "")
   };
 
   if (includeInstance) {
@@ -931,19 +964,31 @@ proto.earth.BonusRes.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setTotalMoney(value);
+      msg.setRebateId(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setTotalCount(value);
+      msg.setTotalMoney(value);
       break;
     case 4:
       var value = /** @type {string} */ (reader.readString());
-      msg.setAreaName(value);
+      msg.setTotalCount(value);
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
+      msg.setAreaName(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
       msg.setCoverArea(value);
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setOrganName(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setOrganId(value);
       break;
     default:
       reader.skipField();
@@ -981,31 +1026,52 @@ proto.earth.BonusRes.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getTotalMoney();
+  f = message.getRebateId();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getTotalCount();
+  f = message.getTotalMoney();
   if (f.length > 0) {
     writer.writeString(
       3,
       f
     );
   }
-  f = message.getAreaName();
+  f = message.getTotalCount();
   if (f.length > 0) {
     writer.writeString(
       4,
       f
     );
   }
-  f = message.getCoverArea();
+  f = message.getAreaName();
   if (f.length > 0) {
     writer.writeString(
       5,
+      f
+    );
+  }
+  f = message.getCoverArea();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
+  f = message.getOrganName();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
+      f
+    );
+  }
+  f = message.getOrganId();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
       f
     );
   }
@@ -1031,10 +1097,10 @@ proto.earth.BonusRes.prototype.setRebateType = function(value) {
 
 
 /**
- * optional string total_money = 2;
+ * optional string rebate_id = 2;
  * @return {string}
  */
-proto.earth.BonusRes.prototype.getTotalMoney = function() {
+proto.earth.BonusRes.prototype.getRebateId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -1043,16 +1109,16 @@ proto.earth.BonusRes.prototype.getTotalMoney = function() {
  * @param {string} value
  * @return {!proto.earth.BonusRes} returns this
  */
-proto.earth.BonusRes.prototype.setTotalMoney = function(value) {
+proto.earth.BonusRes.prototype.setRebateId = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string total_count = 3;
+ * optional string total_money = 3;
  * @return {string}
  */
-proto.earth.BonusRes.prototype.getTotalCount = function() {
+proto.earth.BonusRes.prototype.getTotalMoney = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -1061,16 +1127,16 @@ proto.earth.BonusRes.prototype.getTotalCount = function() {
  * @param {string} value
  * @return {!proto.earth.BonusRes} returns this
  */
-proto.earth.BonusRes.prototype.setTotalCount = function(value) {
+proto.earth.BonusRes.prototype.setTotalMoney = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
 /**
- * optional string area_name = 4;
+ * optional string total_count = 4;
  * @return {string}
  */
-proto.earth.BonusRes.prototype.getAreaName = function() {
+proto.earth.BonusRes.prototype.getTotalCount = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
@@ -1079,16 +1145,16 @@ proto.earth.BonusRes.prototype.getAreaName = function() {
  * @param {string} value
  * @return {!proto.earth.BonusRes} returns this
  */
-proto.earth.BonusRes.prototype.setAreaName = function(value) {
+proto.earth.BonusRes.prototype.setTotalCount = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
 /**
- * optional string cover_area = 5;
+ * optional string area_name = 5;
  * @return {string}
  */
-proto.earth.BonusRes.prototype.getCoverArea = function() {
+proto.earth.BonusRes.prototype.getAreaName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -1097,8 +1163,62 @@ proto.earth.BonusRes.prototype.getCoverArea = function() {
  * @param {string} value
  * @return {!proto.earth.BonusRes} returns this
  */
-proto.earth.BonusRes.prototype.setCoverArea = function(value) {
+proto.earth.BonusRes.prototype.setAreaName = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional string cover_area = 6;
+ * @return {string}
+ */
+proto.earth.BonusRes.prototype.getCoverArea = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.BonusRes} returns this
+ */
+proto.earth.BonusRes.prototype.setCoverArea = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional string organ_name = 7;
+ * @return {string}
+ */
+proto.earth.BonusRes.prototype.getOrganName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.BonusRes} returns this
+ */
+proto.earth.BonusRes.prototype.setOrganName = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
+};
+
+
+/**
+ * optional string organ_id = 8;
+ * @return {string}
+ */
+proto.earth.BonusRes.prototype.getOrganId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.BonusRes} returns this
+ */
+proto.earth.BonusRes.prototype.setOrganId = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 

@@ -6,7 +6,7 @@
         :visible.sync="mapBox"
         destroy-on-close
         :modal=false
-        width="20%"
+        width="18%"
         class="mapBox"
         >
         <ul>
@@ -17,7 +17,7 @@
             发放人次：<span>{{mapBoxData.totalCount}}</span>人
           </li>
           <li>
-            补贴类型数量：<span>{{mapBoxData.rebateType}}</span>个
+            补贴项目数量：<span>{{mapBoxData.rebateType}}</span>个
           </li>
         </ul>
     </el-dialog>
@@ -131,25 +131,14 @@ export default {
     },
     // 加载行政边界
     addZoneBoundary(obj,isFly = true){
-      // let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
-      //   stroke:Cesium.Color.YELLOW,
-      //   fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
-      //   strokeWidth:10
-      // })
-      let neighborhoodsPromise;
+      // neighborhoodsPromise;
+      let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
+        stroke:Cesium.Color.YELLOW,
+        fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
+        strokeWidth:10
+      })
       if(obj.zoneName === 'sx'){
         this.mapBox = false
-        neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
-          stroke:Cesium.Color.YELLOW,
-          fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
-          strokeWidth:10,
-        })
-      }else{
-        neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
-          stroke:Cesium.Color.YELLOW,
-          fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
-          strokeWidth:10
-        })
       }
       
       neighborhoodsPromise.then(dataSource => {
@@ -172,7 +161,13 @@ export default {
                 entity.polygon.material = Cesium.Color.fromCssColorString(
                   "#FF3C3C" //#FF3C3C ,#ff3300
                 ).withAlpha(0.8);
+                entity.polygon.width = 100;
+                // (entity.polyline.material = new Cesium.PolylineGlowMaterialProperty({
+                //     glowPower: .1, //一个数字属性，指定发光强度，占总线宽的百分比。
+                //     color: Cesium.Color.ORANGERED.withAlpha(.9)
+                // }), 10)
               }
+
             });
             var polyPositions = entity.polygon.hierarchy.getValue(
               Cesium.JulianDate.now()
@@ -331,7 +326,7 @@ export default {
 #cesium-earth {
   width: 100%;
   height: 100%;
-  background-image: url('../assets/bg1.png');
+  background-image: url('../assets/bg3.jpg');
 }
 .mapBox{
   z-index: 0!important;
@@ -341,7 +336,8 @@ export default {
 }
 </style>
 <style>
-.el-dialog__body{
+.map .el-dialog__body{
   padding-left: 0;
+  color: #fff!important;
 }
 </style>
