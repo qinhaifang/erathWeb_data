@@ -48,12 +48,12 @@ export default {
       };
       var dataStyle = {
         normal: {
-          formatter: '占比'+'{c}%',
+          formatter: '{c}%',
           position: 'center',
 
           show: true,
           textStyle: {
-            fontSize: '16',
+            fontSize: '24',
             fontWeight: 'normal',
             color: '#4897f6',
           }

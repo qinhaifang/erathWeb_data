@@ -21,7 +21,7 @@
         <pie-chart v-if="fugai" :pieData="pie1"></pie-chart>
         <title-box :title="titleBox2"></title-box>
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-          <el-tab-pane label="发放资金" name="1" :key='activeName'>
+          <el-tab-pane label="发放金额" name="1" :key='activeName'>
             <div class="box">
               <bar-chart v-if="flag" :barData="bar"></bar-chart>
             </div>
@@ -65,12 +65,15 @@
         </el-tabs> -->
         <div class="dep">
           <ul>
-            <li v-for="(item,index) in depList" :key="index">
-              <span :class="{color1:index==0,color2:index==1,color3:index==2}">{{index+1}}</span>
-              <span>{{item.organName.substr(0,4)}}</span>
-              <span>{{item.totalCount}} 笔</span>
-              <span>{{item.totalMoney}}万元</span>
-            </li>
+            <template v-for="(item,index) in depList" >
+              <span v-show="index == currentIndex" class="popName" >{{item.organName}}</span>
+              <li :key="index">
+                <span :class="{color1:index==0,color2:index==1,color3:index==2}">{{index+1}}</span>
+                <span @mouseover="mouseOver(index,item.organName)">{{item.organName.substr(0,5)}}</span>
+                <span>{{item.totalCount}} 笔</span>
+                <span>{{item.totalMoney}}万元</span>
+              </li>
+            </template>
           </ul>
         </div>
       </div>
@@ -110,11 +113,11 @@
         <el-table :data="depData" height="500px">
           <el-table-column property="name" label="主管部门" ></el-table-column>
           <el-table-column property="value" label="补贴项目数" width="120" align="center"></el-table-column>
-          <el-table-column property="totalCount" label="发放资金（万元）" width="150" align="right"></el-table-column>
+          <el-table-column property="totalCount" label="发放金额（万元）" width="150" align="right"></el-table-column>
         </el-table>
       </el-dialog>
       <el-dialog
-        title="银行发放资金占比"
+        title="银行发放金额占比"
         :visible.sync="bankBox"
         destroy-on-close
         width="22%" style="margin-top:8%">
@@ -160,9 +163,9 @@ export default {
       flayTo:true,
       title: "惠民惠农财政补贴资金“一卡通”",
       titleBox1: "覆盖区域",
-      titleBox2: "补贴项目",
-      titleBox3: "发放资金排行榜",
-      titleBox4: "部门排行榜",
+      titleBox2: "补贴项目（万元）",
+      titleBox3: "发放金额统计",
+      titleBox4: "部门统计",
       titleBox5: "区域发放情况",
       total:0,  //覆盖区县
       activeName:"1",
@@ -234,13 +237,14 @@ export default {
         {title:'覆盖区县',value:0},
         {title:'发放人次',value:0},
         {title:'发放笔数',value:0},
-        {title:'发放资金',value:0}
+        {title:'发放金额',value:0}
       ],
       depBox:false,
       depData: [],
       bankBox:false,
       depList:[],
-      subsidyListId:[]
+      subsidyListId:[],
+      currentIndex:null
     };
   },
   watch:{
@@ -277,9 +281,11 @@ export default {
       this.getType(earthReq);
       this.subsidyList(earthReq);
       this.areaList(earthReq);
-      this.getDepList(earthReq)
+      this.getDepList(earthReq);
+      this.totalData[0].name = '覆盖乡镇'
     },
     flayTo:function(value){
+      console.log(111,value,this.totalData);
       let earthReq = new StatisticalReq();
       this.adcode = '14'
       earthReq.setStatisticalCode(this.adcode)
@@ -367,7 +373,6 @@ export default {
       this.rankData = [];
       earthClient.getBonusRankData(params).then(response =>{
         this.rankData = response.toObject().bonusResList;
-
       })
     },
     // 补贴类型
@@ -458,7 +463,7 @@ export default {
           {title:'覆盖区县(个)',value:data.coverArea},
           {title:'发放人次(个)',value:data.totalPerson},
           {title:'发放笔数(笔)',value:data.totalRebate},
-          {title:'发放资金(万元)',value:data.totalMoney},
+          {title:'发放金额(万元)',value:data.totalMoney},
         ]
       })
     },
@@ -509,7 +514,15 @@ export default {
     },
     // 补贴发放列表
     handleClick(tab, event) {
-      // console.log(111,tab.name);
+      tab.name == '1' ? this.titleBox2 = '补贴项目（万元）' : this.titleBox2 = '补贴项目（个）'
+    },
+    // 移入移出
+    mouseOver(index,name){
+      if(name.length > 6){
+        this.currentIndex = index
+      }else{
+        this.currentIndex = null
+      }
     },
     handleClickArea(tab, event) {
       // console.log('区域发放列表',tab.name);
@@ -547,10 +560,11 @@ export default {
     /* letter-spacing: 4px; */
     padding-left: 9%;
     font-weight: 700;
+    color:#E60012;
     /* color: antiquewhite; */
-    background: linear-gradient(to bottom, #72E6FF ,  #2968E8);
+    /* background: linear-gradient(to bottom, #72E6FF ,  #2968E8);
     -webkit-background-clip: text;
-    color: transparent;
+    color: transparent; */
     cursor: pointer;
     position: relative;
     top: -20px;
@@ -578,7 +592,7 @@ export default {
   }
   .right{
     /* width: 320px; */
-    width: 17%;
+    width: 16.5%;
     height: 100%;
     position: absolute;
     top: -2%;
@@ -624,15 +638,20 @@ export default {
   }
   .rank ul li span:nth-child(2),.dep ul li span:nth-child(2){
     display: block;
-    width: 76px;
+    width: 5rem;
     padding-left: 4px;
     text-align: left;
   }
   .rank ul li span:nth-child(3),.dep ul li span:nth-child(3){
-    width: 50px;
+    width: 3.125rem;
+    text-align: right;
   }
   .rank ul li span:not(:first-child),.dep ul li span:not(:first-child){
     display: inline-block;
+  }
+  .rank ul li span:last-child,.dep ul li span:last-child{
+    width: 6.25rem;
+    text-align: right;
   }
   .top{
     width: 65.6%;
@@ -640,7 +659,7 @@ export default {
     top: -2%;
     left: 18%;
     background: rgb(10, 30, 60);
-    padding-top: 25px;
+    padding-top: 1.5625rem;
   }
   .top ul{
     width: 100%;
@@ -650,14 +669,13 @@ export default {
     width: 15%;
     float: left;
     cursor: pointer;
-    padding: 20px 10px ;
+    padding: 1.25rem .625rem ;
   }
     /* .top ul li:nth-child(2){
       width: 10%;
     } */
   .top ul li span{
-    font-size: 18px;
-    
+    font-size: 1.125rem;
   }
   .top ul li p{
     color: rgba(255, 214, 108, 1);
@@ -665,7 +683,7 @@ export default {
 
   .top ul li p span{
     display: inline-block;
-    font-size: 40px!important;
+    font-size: 2.5rem!important;
     font-family: 'number';
   }
   .box{
@@ -698,10 +716,10 @@ export default {
     padding-top: 10px;
   }
   .helpIcon{
-    width: 25px;
+    width: 1.5625rem;
     position: absolute;
     margin-left: 7%;
-    margin-top: -11px;
+    margin-top: -.6875rem;
   }
   .boxTitle{
     padding: 30px 0;
@@ -718,6 +736,16 @@ export default {
     transform: translateX(-50%);
     animation: topLight 4s infinite linear;
     animation-direction: alternate;
+  }
+  .popName{
+    font-size: 14px;
+    padding: 2px 10px;
+    background: #083b59;
+    color: #fff;
+    position: absolute;
+    display: inline-block;
+    left: 27%;
+    margin-top: -11px;
   }
   @keyframes topLight {
     0%{
@@ -777,8 +805,8 @@ export default {
   .mapBox .el-dialog{
     /* background: linear-gradient(90deg, rgba(41, 104, 232, 0.8) 0%, rgba(0, 79, 143, .6) 100%); */
     position: absolute!important;
-    right: 20%;
-    top: 13%;
+    right: 18%;
+    bottom: 0;
   }
   .el-dialog__header{
     height: 33px;

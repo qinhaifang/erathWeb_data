@@ -11,13 +11,16 @@
         >
         <ul>
           <li>
-            发放资金：<span>{{mapBoxData.totalMoney}}</span>万元
-          </li>
-          <li>
             发放人次：<span>{{mapBoxData.totalCount}}</span>人
           </li>
           <li>
-            补贴项目数量：<span>{{mapBoxData.rebateType}}</span>个
+            发放金额：<span>{{mapBoxData.totalMoney}}</span>万元
+          </li>
+          <li>
+            发放笔数：<span>{{mapBoxData.rebateType}}</span>个
+          </li>
+          <li>
+            发放银行：<span>{{mapBoxData.rebateType}}</span>个
           </li>
         </ul>
     </el-dialog>
@@ -29,13 +32,14 @@ import {earthClient} from '@/api/public.js';
 import {StatisticalReq,DictRegionReq} from '@/api/earth/earth_message_pb.js'
 const { Empty } = require('@/api/google/protobuf/empty_pb');
 let empty = new Empty();
+let timer;
 export default {
   props:['params'],
   data() {
     return {
       viewer: null,
       mapBox:false,
-      mapBoxTitle:null,
+      mapBoxTitle:'山西省',
       mapBoxData:{
         totalMoney:0,
         totalCount:0,
@@ -66,7 +70,10 @@ export default {
     this.getList();
     window.viewer = this.viewer;
     this.addLister(); //监听地球点击事件
-    Bus.$on('flayToMap',()=>{  
+    Bus.$on('flayToMap',()=>{ 
+      clearInterval(timer);      
+      this.timer = null;
+      this.mapBox = true;
       setTimeout(this.addZoneBoundary(this.zoneObject[0]),1000)
     })
     Bus.$on("zone-click-event",zoneName =>{
@@ -111,14 +118,31 @@ export default {
         //   maximumLevel: 2,
         // }),
       });
+      this.viewer.scene.sun.destroy(); //去掉太阳
+      this.viewer.scene.sun = undefined; //去掉太阳
+      this.viewer.scene.moon.destroy(); //去掉月亮
+      this.viewer.scene.moon = undefined; //去掉月亮
+      this.viewer.scene.backgroundColor = Cesium.Color.TRANSPARENT;
       this.viewer.cesiumWidget.creditContainer.style.display = "none";
       this.viewer.scene.skyBox.show = false;
       this.viewer.scene.backgroundColor = new Cesium.Color( 0, 0, 0, 0);
       this.addImageLayer();
-      // this.viewer.camera.setView({
-      //   destination:Cesium.Cartesian3.fromDegrees(108.8,35.5,22000000)
-      // })
 
+      this.viewer.clock.multiplier = 200;//速度
+      this.viewer.clock.shouldAnimate = true;
+      var previousTime = this.viewer.clock.currentTime.secondsOfDay;
+
+      var x = 113;
+      timer = setInterval(()=>{
+        x = x + 0.3;
+          if (x >= 178.5) {
+            x = -180
+          }
+          this.viewer.camera.setView({
+            destination:Cesium.Cartesian3.fromDegrees(x,35.5,30000000)
+          })
+      },16)
+      
     },
     addImageLayer(){
       const imageLayer = new Cesium.ImageryLayer(
@@ -134,8 +158,8 @@ export default {
       // neighborhoodsPromise;
       let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
         stroke:Cesium.Color.YELLOW,
-        fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0.5), //地块颜色
-        strokeWidth:10
+        fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0), //地块颜色
+        strokeWidth:50
       })
       if(obj.zoneName === 'sx'){
         this.mapBox = false
@@ -220,6 +244,7 @@ export default {
       if (isFly) this.flyTo(obj.lon, obj.lat, obj.height);
     },
     flyTo(log,lat,height){
+      
       this.viewer.camera.flyTo({
         destination:Cesium.Cartesian3.fromDegrees(log,lat,height),
         duration:3.0

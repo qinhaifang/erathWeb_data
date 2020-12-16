@@ -96,10 +96,12 @@ export default {
             axisLine: "none",
             // max:9,
             show: true,
+
             axisLabel: {
               textStyle: {
                 color: "#ffffff",
                 fontSize: "16",
+                // align:'right'
               },
             },
             data: dataX,
@@ -153,11 +155,9 @@ export default {
       // triggerEvent为true时，触发点击事件
       if(this.barData.id == 'barChart' || this.barData.id == 'barChart1' ){
         this.barChart.on("click", function (params) {
-          console.log('点击echarts',params,this.barData)
           Bus.$emit("buTeiDesc", params.name,params.dataIndex,true);
         });
       }
-      
     },
   },
 };
