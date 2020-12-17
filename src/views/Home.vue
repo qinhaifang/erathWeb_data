@@ -285,7 +285,6 @@ export default {
       this.totalData[0].name = '覆盖乡镇'
     },
     flayTo:function(value){
-      console.log(111,value,this.totalData);
       let earthReq = new StatisticalReq();
       this.adcode = '14'
       earthReq.setStatisticalCode(this.adcode)
@@ -396,6 +395,8 @@ export default {
         var data = response.toObject();
         data.moneyResList.length > 4 ? this.bar.height = '600px' : this.bar.height = '200px'
         data.countResList.length > 4 ? this.bar1.height = '600px' : this.bar1.height = '200px'
+        data.moneyResList.length > 2 ? this.bar.height = '600px' : this.bar.height = '100px'
+        data.countResList.length > 2 ? this.bar1.height = '600px' : this.bar1.height = '100px'
         this.bar.dataY=[];
         this.bar.dataX = [];
         this.bar1.dataY = [];

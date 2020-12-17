@@ -66,8 +66,8 @@ export default {
     deep:true
   },
   mounted() {
-    this.init();
     this.getList();
+    this.init();
     window.viewer = this.viewer;
     this.addLister(); //监听地球点击事件
     Bus.$on('flayToMap',()=>{ 
@@ -143,6 +143,39 @@ export default {
           })
       },16)
       
+    },
+     // 获取覆盖区域
+    getList(){
+      earthClient.getAllCoverCounty(empty).then(response =>{
+        this.fgList =response.toObject().dictRegionList;
+        this.fgList.forEach(item=>{
+          this.nameList.push(item.regionName)
+        })
+        
+      })
+    },
+    getZoneObject(){
+      let num = 0;
+      this.$axios({
+        method:'get',
+        url:'../../static/data/sx.json',
+      }).then(res =>{
+        let data = res.data.features;
+        data.forEach((item,j) =>{
+          this.fgList.forEach((items,k) =>{
+            if(items.regionName === item.properties.name){
+              this.zoneObject.push({
+                zoneName: items.regionName,
+                lon: item.properties.center[0],
+                lat: item.properties.center[1],
+                height: 311615,
+                name: items.regionName
+              })
+            }
+          })
+          
+        })
+      })
     },
     addImageLayer(){
       const imageLayer = new Cesium.ImageryLayer(
@@ -311,39 +344,7 @@ export default {
         this.addZoneBoundary(this.currentZoneObject);
       }
     },
-    // 获取覆盖区域
-    getList(){
-      earthClient.getAllCoverCounty(empty).then(response =>{
-        this.fgList =response.toObject().dictRegionList;
-        this.fgList.forEach(item=>{
-          this.nameList.push(item.regionName)
-        })
-        
-      })
-    },
-    getZoneObject(){
-      let num = 0;
-      this.$axios({
-        method:'get',
-        url:'../../static/data/sx.json',
-      }).then(res =>{
-        let data = res.data.features;
-        data.forEach((item,j) =>{
-          this.fgList.forEach((items,k) =>{
-            if(items.regionName === item.properties.name){
-              this.zoneObject.push({
-                zoneName: items.regionName,
-                lon: item.properties.center[0],
-                lat: item.properties.center[1],
-                height: 311615,
-                name: items.regionName
-              })
-            }
-          })
-          
-        })
-      })
-    }
+   
   },
 };
 </script>
