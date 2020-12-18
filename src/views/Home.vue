@@ -7,10 +7,6 @@
       value-format="yyyy" type="year" @blur="datePicker" placeholder="选择年">
       </el-date-picker>
       </div>
-      <!-- <div class="fr p10" style="position: relative;bottom: 32px;">
-        <span style="padding-top:10px ">欢迎您登录 &nbsp;&nbsp;</span>
-        <img src="../assets/loginOut.svg" style="position: relative;top: 5px;" alt="">
-      </div> -->
       <h3 class="tc titleFont" @click="flayEarth()">{{ title }}</h3>
       <img class="light" src="../assets/light.png" alt="">
     </header>
@@ -55,22 +51,14 @@
           </ul>
         </div>
         <title-box :title="titleBox4"></title-box>
-        <!-- <el-tabs v-model="activeNameArea" type="card" @tab-click="handleClickArea">
-          <el-tab-pane label="发放资金" name="1" :key='activeNameArea'>
-            <bar-chart v-if="quyuFlag"  :barData="bar2"></bar-chart>
-          </el-tab-pane>
-          <el-tab-pane label="发放人次" name="2" :key='activeNameArea+"1"'>
-            <bar-chart :barData="bar3" ></bar-chart>
-          </el-tab-pane>
-        </el-tabs> -->
         <div class="dep">
           <ul>
             <template v-for="(item,index) in depList" >
               <span v-show="index == currentIndex" class="popName" >{{item.organName}}</span>
               <li :key="index">
                 <span :class="{color1:index==0,color2:index==1,color3:index==2}">{{index+1}}</span>
-                <span @mouseover="mouseOver(index,item.organName)">{{item.organName.substr(0,5)}}</span>
-                <span>{{item.totalCount}} 笔</span>
+                <span @mouseover="mouseOver(index,item.organName)">{{item.organName}}</span>
+                <span>{{item.totalCount}}笔</span>
                 <span>{{item.totalMoney}}万元</span>
               </li>
             </template>
@@ -185,7 +173,7 @@ export default {
       },
       bar:{
         id:"barChart",
-        height:'600px',
+        height:'800px',
         dataX:[],
         dataY:[],
         rebateIds:[],
@@ -193,7 +181,7 @@ export default {
       },
       bar1:{
         id:"barChart1",
-        height:'600px',
+        height:'800px',
         dataX:[],
         dataY:[],
         unit:'个'
@@ -287,6 +275,8 @@ export default {
     flayTo:function(value){
       let earthReq = new StatisticalReq();
       this.adcode = '14'
+      this.bar1.height ='800px';
+      this.bar.height ='800px';
       earthReq.setStatisticalCode(this.adcode)
       earthReq.setStatisticalYear(this.year.substr(0,4))
       earthReq.setStatisticalType(this.type)
@@ -393,10 +383,16 @@ export default {
     subsidyList(params){
       earthClient.getBonusSubsidyAllData(params).then(response =>{
         var data = response.toObject();
-        data.moneyResList.length > 4 ? this.bar.height = '600px' : this.bar.height = '200px'
-        data.countResList.length > 4 ? this.bar1.height = '600px' : this.bar1.height = '200px'
-        data.moneyResList.length > 2 ? this.bar.height = '600px' : this.bar.height = '100px'
-        data.countResList.length > 2 ? this.bar1.height = '600px' : this.bar1.height = '100px'
+        console.log(888,data.moneyResList.length)
+        if( 1<= data.moneyResList.length && data.moneyResList.length <= 3){
+          this.bar.height = '100px';
+          this.bar1.height = '100px'
+        }else if(3 <= data.moneyResList.length &&  data.moneyResList.length <= 7){
+          this.bar.height = '200px';
+          this.bar1.height = '200px'
+        }
+        
+ 
         this.bar.dataY=[];
         this.bar.dataX = [];
         this.bar1.dataY = [];
@@ -603,23 +599,18 @@ export default {
     /* background-color: rgba(55, 100, 171,.3); */
   }
   .rank ul li,.dep ul li{
-    padding: 0 10px;
-    height: 35px;
-    line-height: 35px;
+    padding: 5px 10px;
     margin: 8px;
     background: linear-gradient(90deg, rgba(0, 43, 144, 0) 0%, rgba(0, 125, 203, 0.51) 100%);
   }
   .color1{
     background: #FF3C3C;
-    /* border: 1px solid #BC0000; */
   }
   .color2{
     background: #FF8122;
-    /* border: 1px solid #E3861C; */
   }
   .color3{
     background: #F0DE40;
-    /* border: 1px solid #FFBB52; */
   }
   .rank{
     height: 230px;
@@ -643,15 +634,21 @@ export default {
     padding-left: 4px;
     text-align: left;
   }
+  .dep ul li span:nth-child(2){
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: break-all;
+  }
   .rank ul li span:nth-child(3),.dep ul li span:nth-child(3){
-    width: 3.125rem;
+    width: 3rem;
     text-align: right;
   }
   .rank ul li span:not(:first-child),.dep ul li span:not(:first-child){
     display: inline-block;
   }
   .rank ul li span:last-child,.dep ul li span:last-child{
-    width: 6.25rem;
+    width: 6.85rem;
     text-align: right;
   }
   .top{
@@ -667,10 +664,13 @@ export default {
     text-align: center;
   }
   .top ul li{
-    width: 15%;
+    width: 13%;
     float: left;
     cursor: pointer;
     padding: 1.25rem .625rem ;
+  }
+   .top ul li:nth-child(5),.top ul li:nth-child(6){
+    width: 18%;
   }
     /* .top ul li:nth-child(2){
       width: 10%;

@@ -51,7 +51,7 @@ export default {
           zoneName: "sx",
           lon: 112.549248,
           lat: 37.857014,
-          height: 1314150,
+          height: 1600000,
           name: "山西省"
         }
       ],
