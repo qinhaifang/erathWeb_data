@@ -11,16 +11,16 @@
         >
         <ul>
           <li>
-            发放人次：<span>{{mapBoxData.totalCount}}</span>人
+            发放人次：<span>{{mapBoxData.personCount}}</span>人
           </li>
           <li>
             发放金额：<span>{{mapBoxData.totalMoney}}</span>万元
           </li>
           <li>
-            发放笔数：<span>{{mapBoxData.rebateType}}</span>个
+            发放笔数：<span>{{mapBoxData.bonusIdCount}}</span>个
           </li>
           <li>
-            发放银行：<span>{{mapBoxData.rebateType}}</span>个
+            发放银行：<span>{{mapBoxData.bankTypeCount}}</span>个
           </li>
         </ul>
     </el-dialog>
@@ -41,9 +41,10 @@ export default {
       mapBox:false,
       mapBoxTitle:'山西省',
       mapBoxData:{
+        personCount:0,
         totalMoney:0,
-        totalCount:0,
-        rebateType:0
+        bonusIdCount:0,
+        bankTypeCount:0
       },
       fgList:[],
       zoneObject: [
@@ -89,6 +90,10 @@ export default {
       this.clearZoneBoundary();
     });
     this.getZoneObject()
+    let earthReqs = new StatisticalReq();
+    earthReqs.setStatisticalCode('14')
+    earthReqs.setStatisticalYear(this.year+'')
+    this.getPopbox(earthReqs)
   },
   methods: {
     init() {
@@ -195,7 +200,7 @@ export default {
         strokeWidth:50
       })
       if(obj.zoneName === 'sx'){
-        this.mapBox = false
+        this.mapBox = true
       }
       
       neighborhoodsPromise.then(dataSource => {
@@ -308,24 +313,27 @@ export default {
               //   let data = response.toObject();
               // })
               // 点击县弹出详情
-              earthClient.getBonusSituationDataList(earthReq).then(response =>{
-                let data = response.toObject();
-                if(data.bonusResList.length > 0){
-                  this.mapBoxData = data.bonusResList[0];
-                }else{
-                  this.mapBoxData = {
-                    totalMoney:0,
-                    totalCount:0,
-                    rebateType:0
-                  }
-                }
-              })
+              this.getPopbox(earthReq)
             }
           })
           Bus.$emit("zone-click-event", model.name);
         }
       }, Cesium.ScreenSpaceEventType.LEFT_DOWN); 
-
+    },
+    getPopbox(earthReq){
+      earthClient.getBonusSituationDataList(earthReq).then(response =>{
+        let data = response.toObject();
+        if(data.bonusResList.length > 0){
+          this.mapBoxData = data.bonusResList[0];
+        }else{
+          this.mapBoxData = {
+            personCount:0,
+            totalMoney:0,
+            bonusIdCount:0,
+            bankTypeCount:0
+          }
+        }
+      })
     },
     //清除行政区划
     clearZoneBoundary() {

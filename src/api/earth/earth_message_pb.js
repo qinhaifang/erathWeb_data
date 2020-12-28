@@ -921,7 +921,10 @@ proto.earth.BonusRes.toObject = function(includeInstance, msg) {
     areaName: jspb.Message.getFieldWithDefault(msg, 5, ""),
     coverArea: jspb.Message.getFieldWithDefault(msg, 6, ""),
     organName: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    organId: jspb.Message.getFieldWithDefault(msg, 8, "")
+    organId: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    bonusIdCount: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    bankTypeCount: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    personCount: jspb.Message.getFieldWithDefault(msg, 11, 0)
   };
 
   if (includeInstance) {
@@ -989,6 +992,18 @@ proto.earth.BonusRes.deserializeBinaryFromReader = function(msg, reader) {
     case 8:
       var value = /** @type {string} */ (reader.readString());
       msg.setOrganId(value);
+      break;
+    case 9:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setBonusIdCount(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setBankTypeCount(value);
+      break;
+    case 11:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setPersonCount(value);
       break;
     default:
       reader.skipField();
@@ -1072,6 +1087,27 @@ proto.earth.BonusRes.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       8,
+      f
+    );
+  }
+  f = message.getBonusIdCount();
+  if (f !== 0) {
+    writer.writeInt32(
+      9,
+      f
+    );
+  }
+  f = message.getBankTypeCount();
+  if (f !== 0) {
+    writer.writeInt32(
+      10,
+      f
+    );
+  }
+  f = message.getPersonCount();
+  if (f !== 0) {
+    writer.writeInt32(
+      11,
       f
     );
   }
@@ -1219,6 +1255,60 @@ proto.earth.BonusRes.prototype.getOrganId = function() {
  */
 proto.earth.BonusRes.prototype.setOrganId = function(value) {
   return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional int32 bonus_id_count = 9;
+ * @return {number}
+ */
+proto.earth.BonusRes.prototype.getBonusIdCount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.earth.BonusRes} returns this
+ */
+proto.earth.BonusRes.prototype.setBonusIdCount = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional int32 bank_type_count = 10;
+ * @return {number}
+ */
+proto.earth.BonusRes.prototype.getBankTypeCount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.earth.BonusRes} returns this
+ */
+proto.earth.BonusRes.prototype.setBankTypeCount = function(value) {
+  return jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
+/**
+ * optional int32 person_count = 11;
+ * @return {number}
+ */
+proto.earth.BonusRes.prototype.getPersonCount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.earth.BonusRes} returns this
+ */
+proto.earth.BonusRes.prototype.setPersonCount = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 

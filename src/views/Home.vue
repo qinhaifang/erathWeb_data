@@ -52,7 +52,7 @@
         </div>
         <title-box :title="titleBox4"></title-box>
         <div class="dep">
-          <ul>
+          <ul style="position:relative">
             <template v-for="(item,index) in depList" >
               <span v-show="index == currentIndex" class="popName" >{{item.organName}}</span>
               <li :key="index">
@@ -261,16 +261,19 @@ export default {
       earthReq.setStatisticalType(this.type)
       this.flag = false;
       this.quyuFlag = false;
-      // this.fugai = false;
       this.descFlag = false;
-      // this.coverArea(earthReq)
       this.getTotal(earthReq);
-      // this.getRank(earthReq);
+      this.getRank(earthReq);
       this.getType(earthReq);
       this.subsidyList(earthReq);
       this.areaList(earthReq);
       this.getDepList(earthReq);
-      this.totalData[0].name = '覆盖乡镇'
+      if(this.adcode == '14'){
+        this.totalData[0].name = '覆盖区县'
+      }else{
+        this.totalData[0].name = '覆盖乡镇'
+      }
+      
     },
     flayTo:function(value){
       let earthReq = new StatisticalReq();
@@ -282,11 +285,10 @@ export default {
       earthReq.setStatisticalType(this.type)
       this.flag = false;
       this.quyuFlag = false;
-      // this.fugai = false;
       this.descFlag = false;
       this.coverArea(earthReq)
       this.getTotal(earthReq);
-      // this.getRank(earthReq);
+      this.getRank(earthReq);
       this.getType(earthReq);
       this.subsidyList(earthReq);
       this.areaList(earthReq);
@@ -379,11 +381,10 @@ export default {
       earthReq.setStatisticalId(value)
       this.getRank(earthReq)
     },
-    // 补贴发放
+    // 补贴项目
     subsidyList(params){
       earthClient.getBonusSubsidyAllData(params).then(response =>{
         var data = response.toObject();
-        console.log(888,data.moneyResList.length)
         if( 1<= data.moneyResList.length && data.moneyResList.length <= 3){
           this.bar.height = '100px';
           this.bar1.height = '100px'
@@ -391,7 +392,6 @@ export default {
           this.bar.height = '200px';
           this.bar1.height = '200px'
         }
-        
  
         this.bar.dataY=[];
         this.bar.dataX = [];
@@ -399,7 +399,7 @@ export default {
         this.bar1.dataX = [];
         data.moneyResList.forEach((item,index) =>{
           this.bar.dataY.push(item.rebateType)
-          this.bar.dataX.push(Number(item.totalMoney))
+          this.bar.dataX.push(Number(item.totalMoney).toFixed(2))
           this.bar.rebateIds.push(item.rebateId)
         })
         data.countResList.forEach((item,index) =>{
@@ -734,9 +734,9 @@ export default {
     position: relative;
     left: 45%;
     top: -6px;
-    transform: translateX(-50%);
+    /* transform: translateX(-50%);
     animation: topLight 4s infinite linear;
-    animation-direction: alternate;
+    animation-direction: alternate; */
   }
   .popName{
     font-size: 14px;
