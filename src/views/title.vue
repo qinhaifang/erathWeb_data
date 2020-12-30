@@ -18,7 +18,6 @@ export default {
     background-size: cover;
     font-size: 18px;
     font-weight: 700;
-    /* width: 80%;
-    padding: 10px; */
+    margin-bottom: 10px;
   }
 </style>

@@ -6,7 +6,7 @@
         :visible.sync="mapBox"
         destroy-on-close
         :modal=false
-        width="18%"
+        width="17%"
         class="mapBox"
         >
         <ul>
@@ -144,7 +144,7 @@ export default {
             x = -180
           }
           this.viewer.camera.setView({
-            destination:Cesium.Cartesian3.fromDegrees(x,35.5,30000000)
+            destination:Cesium.Cartesian3.fromDegrees(x,35.5,16000000)
           })
       },16)
       
@@ -360,18 +360,20 @@ export default {
 #cesium-earth {
   width: 100%;
   height: 100%;
-  background-image: url('../assets/bg3.jpg');
+  border-radius: 5px; overflow: hidden;
+  background-image: none; background-color: transparent;
 }
 .mapBox{
   z-index: 0!important;
 }
 .mapBox ul li {
-  padding: 10px;
+  padding: 10px; font-size: 16px;
 }
 </style>
 <style>
 .map .el-dialog__body{
   padding-left: 0;
+  padding-top: 0;
   color: #fff!important;
 }
 </style>
