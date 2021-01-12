@@ -58,7 +58,8 @@
             </li>
           </ul>
         </div>
-        <div class="text" @click="clickEarth()">点击进入</div>
+        <div class="text" v-show="clickIn" @click="clickEarth()">点击进入</div>
+        <div class="backBtn" v-show="!clickIn" @click="flayEarth()">返回</div>
         <earth-map :params="paramsData"></earth-map>
       </div>
       <div class="right">
@@ -219,6 +220,7 @@ export default {
       descFlag: false,
       bankFlag: false,
       flayTo: true,
+      clickIn: true,
       title: "惠民惠农财政补贴资金“一卡通”",
       titleBox1: "覆盖区域",
       titleBox2: "补贴项目（万元）",
@@ -583,6 +585,7 @@ export default {
     },
     flayEarth() {
       Bus.$emit("flayToMap");
+      console.log(66,this.flayTo)
       this.flayTo = !this.flayTo;
     },
     datePicker(value) {
@@ -617,6 +620,7 @@ export default {
       // console.log('区域发放列表',tab.name);
     },
     clickEarth() {
+      this.clickIn = false
       Bus.$emit("flayToMap");
     },
   },
@@ -662,9 +666,12 @@ h3 {
   width: 50%;
 }
 .text {
-  position: fixed; top: 55%; left: 50%; transform: translate(-50%, 0%); width: 300px; height: 60px; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.5); line-height: 60px; text-align: center; font-size: 28px; cursor: pointer; background: rgba(0, 0, 0, 0.2); transition: border .3s;
+  position: fixed; top: 55%; left: 50%; transform: translate(-50%, 0%); width: 300px; height: 60px; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.5); line-height: 60px; text-align: center; font-size: 28px; cursor: pointer; background: rgba(0, 0, 0, 0.2); transition: border .3s;z-index: 1;
 }
-.text:hover {
+.backBtn{
+  position: fixed; top: 22%; left: 23%; transform: translate(-50%, 0%); width: 60px; height: 35px; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.5); line-height: 35px; text-align: center; font-size: 16px; cursor: pointer; background: rgba(0, 0, 0, 0.2); transition: border .3s;z-index: 1;border-radius: 4px;
+}
+.text:hover,.backBtn:hover {
   border-color: #00b1ff;
 }
 .container {
@@ -714,7 +721,7 @@ h3 {
   overflow: auto;
 }
 .dep {
-  height: 480px;
+  height: 460px;
   overflow: auto;
 }
 .rank ul li span:first-child,
@@ -764,12 +771,16 @@ h3 {
 .top ul li {
   width: 11%;
   float: left;
-  cursor: pointer;
+  /* cursor: pointer; */
   padding: 1.25rem 0.625rem;
 }
 .top ul li:nth-child(5),
 .top ul li:nth-child(6) {
   width: 22%;
+}
+.top ul li:nth-child(2),
+.top ul li:nth-child(4){
+  cursor: pointer;
 }
 .top ul li span {
   font-size: 1.125rem;
@@ -896,7 +907,7 @@ h3 {
 .mapBox .el-dialog {
   /* background: linear-gradient(90deg, rgba(41, 104, 232, 0.8) 0%, rgba(0, 79, 143, .6) 100%); */
   position: absolute !important;
-  right: 19%;
+  right: 21%;
   bottom: 0;
 }
 .el-dialog__header {
