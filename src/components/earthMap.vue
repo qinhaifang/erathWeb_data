@@ -56,13 +56,18 @@ export default {
           name: "山西省"
         }
       ],
-      year:new Date().getFullYear(),
+      year:'',
       nameList:[]
     };
   },
   watch: {
     params:function(newVal,oldVal){
-      this.year = newVal.year
+      this.year = newVal.year.substr(0, 4)
+      let earthReqs = new StatisticalReq();
+      earthReqs.setStatisticalCode('14')
+      earthReqs.setStatisticalYear(newVal.year.substr(0, 4))
+      this.getPopbox(earthReqs);
+      sessionStorage.setItem('year',this.year)
     },
     deep:true
   },
@@ -71,11 +76,16 @@ export default {
     this.init();
     window.viewer = this.viewer;
     this.addLister(); //监听地球点击事件
+    let earthReqs = new StatisticalReq();
+    earthReqs.setStatisticalCode('14')
+    earthReqs.setStatisticalYear(sessionStorage.getItem('year') ? sessionStorage.getItem('year') + '': this.year)
     Bus.$on('flayToMap',()=>{ 
       clearInterval(timer);      
       this.timer = null;
       this.mapBox = true;
+      this.mapBoxTitle = '山西省'
       setTimeout(this.addZoneBoundary(this.zoneObject[0]),1000)
+       this.getPopbox(earthReqs)
     })
     Bus.$on("zone-click-event",zoneName =>{
       if (!zoneName) {
@@ -89,10 +99,7 @@ export default {
     Bus.$on("clear-all-mark", () => {
       this.clearZoneBoundary();
     });
-    this.getZoneObject()
-    let earthReqs = new StatisticalReq();
-    earthReqs.setStatisticalCode('14')
-    earthReqs.setStatisticalYear(this.year+'')
+    
     this.getPopbox(earthReqs)
   },
   methods: {
@@ -153,10 +160,10 @@ export default {
     getList(){
       earthClient.getAllCoverCounty(empty).then(response =>{
         this.fgList =response.toObject().dictRegionList;
+        this.getZoneObject();
         this.fgList.forEach(item=>{
           this.nameList.push(item.regionName)
-        })
-        
+        })   
       })
     },
     getZoneObject(){
@@ -178,7 +185,6 @@ export default {
               })
             }
           })
-          
         })
       })
     },
@@ -224,10 +230,6 @@ export default {
                   "#FF3C3C" //#FF3C3C ,#ff3300
                 ).withAlpha(0.8);
                 entity.polygon.width = 100;
-                // (entity.polyline.material = new Cesium.PolylineGlowMaterialProperty({
-                //     glowPower: .1, //一个数字属性，指定发光强度，占总线宽的百分比。
-                //     color: Cesium.Color.ORANGERED.withAlpha(.9)
-                // }), 10)
               }
 
             });
@@ -282,7 +284,6 @@ export default {
       if (isFly) this.flyTo(obj.lon, obj.lat, obj.height);
     },
     flyTo(log,lat,height){
-      
       this.viewer.camera.flyTo({
         destination:Cesium.Cartesian3.fromDegrees(log,lat,height),
         duration:3.0
@@ -325,6 +326,7 @@ export default {
         let data = response.toObject();
         if(data.bonusResList.length > 0){
           this.mapBoxData = data.bonusResList[0];
+          
         }else{
           this.mapBoxData = {
             personCount:0,

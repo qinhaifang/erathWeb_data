@@ -21,7 +21,6 @@ export default {
   },
   watch: {
     pieData: function (newValue, oldValue) {
-      console.log("new", newValue, oldValue);
       this.initChart();
     },
     deep: true,
@@ -50,20 +49,23 @@ export default {
         color: ['#F0DE40', '#FF8122', '#4897f6', '#ea9b4f', '#7577df', '#be72d8', '#fff'],
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
+          confine:true,
+          // formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         grid:{
-          left:'10px'
+          left:'10px',
+          top:'0px'
         },
         series: [{
-          name: '统计',
+          name: '银行发放金额占比',
           type: 'pie',
-          radius: [30, 70],
+          radius: [30, 60],
           center: ['50%', '50%'],
           roseType: 'radius',
+          avoidLabelOverlap: true,
           label: {
             show: true,
-            position: 'outside',
+            position: 'outside', //inside
             formatter: '{b}：{d}%',
           },
           emphasis: {

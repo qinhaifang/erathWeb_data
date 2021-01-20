@@ -26,11 +26,17 @@
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
           <el-tab-pane label="发放金额" name="1" :key="activeName">
             <div class="box">
+              <!-- <div class="nodata" v-show="!rankNodata">
+                <img src="../assets/noData.png" alt="">
+              </div> -->
               <bar-chart v-if="flag" :barData="bar"></bar-chart>
             </div>
           </el-tab-pane>
           <el-tab-pane label="发放人次" name="2" :key="activeName + '1'">
             <div class="box">
+              <!-- <div class="nodata" v-show="!rankNodata">
+                <img src="../assets/noData.png" alt="">
+              </div> -->
               <bar-chart v-if="flag" :barData="bar1"></bar-chart>
             </div>
           </el-tab-pane>
@@ -86,14 +92,7 @@
                 item.areaName
               }}</span>
               <li :key="index">
-                <span
-                  :class="{
-                    color1: index == 0,
-                    color2: index == 1,
-                    color3: index == 2,
-                  }"
-                  >{{ index + 1 }}</span
-                >
+                <span></span>
                 <span @mouseover="mouseOvers(index, item.areaName)">{{
                   item.areaName
                 }}</span>
@@ -102,6 +101,9 @@
               </li>
             </template>
           </ul>
+          <div class="nodata" v-show="!rankNodata">
+            <img src="../assets/noData.png" alt="">
+          </div>
         </div>
         <title-box :title="titleBox4"></title-box>
         <div class="dep">
@@ -111,14 +113,15 @@
                 item.organName
               }}</span>
               <li :key="index">
-                <span
+                <!-- <span
                   :class="{
                     color1: index == 0,
                     color2: index == 1,
                     color3: index == 2,
                   }"
                   >{{ index + 1 }}</span
-                >
+                > -->
+                <span></span>
                 <span @mouseover="mouseOver(index, item.organName)">{{
                   item.organName
                 }}</span>
@@ -127,9 +130,11 @@
               </li>
             </template>
           </ul>
+          <div class="nodata" v-show="!rankNodata">
+            <img src="../assets/noData.png" alt="">
+          </div>
         </div>
       </div>
-
       <el-dialog
         :title="boxTitle"
         :visible.sync="buTieDesc"
@@ -227,7 +232,7 @@ export default {
       titleBox3: "发放金额统计",
       titleBox4: "部门统计",
       titleBox5: "区域发放情况",
-      total: 0, //覆盖区县
+      total: 0,  //覆盖区县
       activeName: "1",
       activeNameArea: "1",
       pie1: {
@@ -307,11 +312,13 @@ export default {
       subsidyListId: [],
       currentIndex: null,
       currentIndexs: null,
+      rankNodata:false
     };
   },
   watch: {
     year: function (value) {
       let earthReq = new StatisticalReq();
+      this.paramsData.year = value
       earthReq.setStatisticalCode(this.adcode);
       earthReq.setStatisticalYear(this.year.substr(0, 4));
       earthReq.setStatisticalType(this.type);
@@ -342,6 +349,11 @@ export default {
       this.subsidyList(earthReq);
       this.areaList(earthReq);
       this.getDepList(earthReq);
+      if(this.adcode == '14'){
+        this.totalData[0].name = '覆盖区县'
+      }else{
+        this.totalData[0].name = '覆盖乡镇'
+      }
     },
     flayTo: function (value) {
       let earthReq = new StatisticalReq();
@@ -377,7 +389,6 @@ export default {
     this.subsidyList(earthReq);
     this.areaList(earthReq);
     this.getDepList(earthReq);
-
     Bus.$on("buTeiDesc", (name, index, state) => {
       this.buTieDesc = state;
       this.boxTitle = name;
@@ -386,10 +397,10 @@ export default {
       this.getAreaBonusDetailData(earthReq);
       this.getAreaSubsidyData(earthReq);
     }),
-      Bus.$on("child-to-parent", (code) => {
-        this.adcode = code;
-        earthReq.setStatisticalCode(code);
-      });
+    Bus.$on("child-to-parent", (code) => {
+      this.adcode = code;
+      earthReq.setStatisticalCode(code);
+    });
   },
   methods: {
     // 统计数据
@@ -413,11 +424,14 @@ export default {
         });
       });
     },
-    // 发放资金排行榜
+    // 发放金额统计
     getRank(params) {
       this.rankData = [];
       earthClient.getBonusRankData(params).then((response) => {
         this.rankData = response.toObject().bonusResList;
+        if(this.rankData.length > 0){
+          this.rankNodata = true
+        }
       });
     },
     // 补贴类型
@@ -585,7 +599,6 @@ export default {
     },
     flayEarth() {
       Bus.$emit("flayToMap");
-      console.log(66,this.flayTo)
       this.flayTo = !this.flayTo;
     },
     datePicker(value) {
@@ -620,8 +633,8 @@ export default {
       // console.log('区域发放列表',tab.name);
     },
     clickEarth() {
-      this.clickIn = false
       Bus.$emit("flayToMap");
+      this.clickIn = false
     },
   },
 };
@@ -633,6 +646,10 @@ export default {
 }
 .clear {
   clear: both;
+}
+.nodata{
+  text-align: center;
+  margin-top: 10%;
 }
 #main {
   position: relative;
@@ -654,11 +671,11 @@ h3 {
   font-size: 32px;
   padding-left: 9%;
   font-weight: 700;
-  /* color:#E60012; */
-  color: antiquewhite;
-  background: linear-gradient(to bottom, #FFBC00 ,  #FF3100);
+  color:rgba(234, 85, 50, 1);
+  /* color: antiquewhite; */
+  /* background: linear-gradient(to bottom, #FFBC00 ,  #FF3100); */
   -webkit-background-clip: text; 
-  color: transparent;
+  /* color: transparent; */
   cursor: pointer;
   position: relative;
   top: -20px;
@@ -724,7 +741,7 @@ h3 {
   height: 460px;
   overflow: auto;
 }
-.rank ul li span:first-child,
+/* .rank ul li span:first-child,
 .dep ul li span:first-child {
   display: inline-block;
   width: 22px;
@@ -732,11 +749,11 @@ h3 {
   text-align: center;
   line-height: 22px;
   border-radius: 50%;
-}
+} */
 .rank ul li span:nth-child(2),
 .dep ul li span:nth-child(2) {
   display: block;
-  width: 5rem;
+  width: 7rem;
   padding-left: 4px;
   text-align: left;
 }
@@ -749,8 +766,8 @@ h3 {
 }
 .rank ul li span:nth-child(3),
 .dep ul li span:nth-child(3) {
-  width: 3rem;
-  text-align: right;
+  width: 5rem;
+  text-align: center;
 }
 .rank ul li span:not(:first-child),
 .dep ul li span:not(:first-child) {
@@ -758,7 +775,7 @@ h3 {
 }
 .rank ul li span:last-child,
 .dep ul li span:last-child {
-  width: 6.85rem;
+  width: 7rem;
   text-align: right;
 }
 .top {

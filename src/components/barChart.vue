@@ -21,7 +21,6 @@ export default {
   },
   watch: {
     barData: function (newValue, oldValue) {
-      console.log("new", newValue, oldValue);
       this.initChart();
     },
     deep: true,
@@ -76,6 +75,13 @@ export default {
                 color: "#fff",
                 fontSize: "16",
               },
+              formatter:function(value){
+                var res = value;
+                if(res.length >7){
+                  res = res.substring(0,6) + ".."
+                }
+                return res;
+              }
             },
             splitLine: {
               show: false,
