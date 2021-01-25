@@ -13,14 +13,16 @@
 <script>
 import echarts from "echarts";
 export default {
-  props: ["pieData"],
+  props: ["pieData",'params'],
   data() {
     return {
       chartPie: null,
     };
   },
   watch: {
-    
+    params:function(newVal,oldVal){
+      console.log('覆盖',newVal,oldVal)
+    }
   },
   mounted() {
     this.drawLine();
@@ -68,7 +70,7 @@ export default {
             }
         },
         title: [{
-          text: '覆盖区县',
+          text: '覆盖县区',
           left: '24%',
           top: '55%',
           textAlign: 'center',
@@ -79,7 +81,7 @@ export default {
             textAlign: 'center',
           },
         }, {
-          text: '未覆盖区县',
+          text: '未覆盖县区',
           left: '74%',
           top: '55%',
           textAlign: 'center',
@@ -218,7 +220,7 @@ export default {
   .pie{
     display: inline;
     position: relative;
-    left: -5%;
+    /* left: -5%; */
     bottom: 46px;
     padding-left: 29px
   }

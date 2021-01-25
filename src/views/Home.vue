@@ -21,22 +21,16 @@
           全省县区：<b class="f30">{{ total }}</b
           >个
         </p>
-        <pie-chart v-if="fugai" :pieData="pie1"></pie-chart>
+        <pie-chart v-if="fugai" :pieData="pie1" :params="paramsData"></pie-chart>
         <title-box :title="titleBox2"></title-box>
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
           <el-tab-pane label="发放金额" name="1" :key="activeName">
             <div class="box">
-              <!-- <div class="nodata" v-show="!rankNodata">
-                <img src="../assets/noData.png" alt="">
-              </div> -->
               <bar-chart v-if="flag" :barData="bar"></bar-chart>
             </div>
           </el-tab-pane>
           <el-tab-pane label="发放人次" name="2" :key="activeName + '1'">
             <div class="box">
-              <!-- <div class="nodata" v-show="!rankNodata">
-                <img src="../assets/noData.png" alt="">
-              </div> -->
               <bar-chart v-if="flag" :barData="bar1"></bar-chart>
             </div>
           </el-tab-pane>
@@ -52,7 +46,7 @@
             >
               <img
                 class="helpIcon"
-                v-show="index == 1 || index == 3"
+                v-show="index == 0 || index == 1 || index == 2|| index == 3"
                 src="../assets/icon.png"
                 alt=""
               />
@@ -162,18 +156,88 @@
         width="35%"
         style="margin-top: 4%"
       >
-        <el-table :data="depData" height="500px">
-          <el-table-column property="name" label="主管部门"></el-table-column>
+        <el-table :data="depData" height="500px" style="font-size:16px"> 
+          <el-table-column property="organName" label="主管部门"></el-table-column>
           <el-table-column
-            property="value"
+            property="rebateIdCount"
             label="补贴项目数"
             width="120"
             align="center"
           ></el-table-column>
           <el-table-column
-            property="totalCount"
+            property="payAmount"
             label="发放金额（万元）"
             width="150"
+            align="right"
+          ></el-table-column>
+        </el-table>
+      </el-dialog>
+      <el-dialog
+        title="覆盖县区"
+        :visible.sync="coverBox"
+        destroy-on-close
+        width="40%"
+        style="margin-top: 4%"
+      >
+        <el-table :data="coverData" height="500px" style="font-size:16px">
+          <el-table-column property="areaName" label="县区"></el-table-column>
+          <el-table-column
+            property="rebateIdCount"
+            label="补贴项目数"
+            width="120"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            property="bankTypeCount"
+            label="银行种类"
+            width="120"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            property="personCount"
+            label="受益人口数"
+            width="120"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            property="payAmount"
+            label="已发放金额（万元）"
+            width="180"
+            align="right"
+          ></el-table-column>
+        </el-table>
+      </el-dialog>
+      <el-dialog
+        title="补贴项目数"
+        :visible.sync="butieBox"
+        destroy-on-close
+        width="40%"
+        style="margin-top: 4%"
+      >
+        <el-table :data="butieData" height="500px" style="font-size:16px">
+          <el-table-column property="rebateName" label="补贴项"></el-table-column>
+          <!-- <el-table-column
+            property="value"
+            label="受益对象"
+            width="120"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            property="value"
+            label="发放周期"
+            width="120"
+            align="center"
+          ></el-table-column> -->
+          <el-table-column
+            property="personCount"
+            label="受益人口数"
+            width="120"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            property="payAmount"
+            label="已发放金额（万元）"
+            width="180"
             align="right"
           ></el-table-column>
         </el-table>
@@ -217,7 +281,7 @@ export default {
         adcode: "14",
       },
       adcode: "14",
-      type: "area", //bank  organ
+      type: "all", //all bank organ(主管部门) area(覆盖区县) rebate(补贴项目)
       rebateId: "",
       flag: false, //初始化为false,拿到数据为true
       quyuFlag: false,
@@ -289,7 +353,7 @@ export default {
       typeValue: "",
       rankData: [],
       totalData: [
-        { name: "覆盖区县", num: 0, unit: "个" },
+        { name: "覆盖县区", num: 0, unit: "个" },
         { name: "主管部门", num: 0, unit: "个" },
         { name: "补贴项目", num: 0, unit: "个" },
         { name: "代发银行", num: 0, unit: "个" },
@@ -300,13 +364,17 @@ export default {
       boxTitle: null,
       getAreaBonusDetail: [
         //补贴发放详情头部
-        { title: "覆盖区县", value: 0 },
+        { title: "覆盖县区", value: 0 },
         { title: "发放人次", value: 0 },
         { title: "发放笔数", value: 0 },
         { title: "发放金额", value: 0 },
       ],
       depBox: false,
+      coverBox: false,
+      butieBox: false,
       depData: [],
+      coverData:[],
+      butieData:[],
       bankBox: false,
       depList: [],
       subsidyListId: [],
@@ -350,7 +418,7 @@ export default {
       this.areaList(earthReq);
       this.getDepList(earthReq);
       if(this.adcode == '14'){
-        this.totalData[0].name = '覆盖区县'
+        this.totalData[0].name = '覆盖县区'
       }else{
         this.totalData[0].name = '覆盖乡镇'
       }
@@ -518,17 +586,17 @@ export default {
       earthClient.getGraphicStatistics(params).then((response) => {
         var data = response.toObject();
         this.total =
-          Number(data.graphicStatisticsList[0].value) +
-          Number(data.graphicStatisticsList[1].value);
+          Number(data.graphicStatisticsList[0].coverCount) +
+          Number(data.graphicStatisticsList[1].coverCount);
         data.graphicStatisticsList.forEach((item, index) => {
           if (index == 0) {
-            this.pie1.data1 = ((Number(item.value) / this.total) * 100).toFixed(
+            this.pie1.data1 = ((Number(item.coverCount) / this.total) * 100).toFixed(
               2
             );
-            this.pie1.text1 = "覆盖区县：" + item.value + "个";
+            this.pie1.text1 = "覆盖县区：" + item.coverCount + "个";
           } else {
             this.pie1.data2 = parseInt(100 - this.pie1.data1);
-            this.pie1.text2 = "未覆盖区县：" + item.value + "个";
+            this.pie1.text2 = "未覆盖县区：" + item.coverCount + "个";
           }
         });
         this.fugai = true;
@@ -540,7 +608,7 @@ export default {
         let data = response.toObject();
         this.getAreaBonusDetail = [
           //补贴发放详情头部
-          { title: "覆盖区县(个)", value: data.coverArea },
+          { title: "覆盖县区(个)", value: data.coverArea },
           { title: "发放人次(个)", value: data.totalPerson },
           { title: "发放笔数(笔)", value: data.totalRebate },
           { title: "发放金额(万元)", value: data.totalMoney },
@@ -573,7 +641,12 @@ export default {
         earthReq.setStatisticalType("bank");
         earthClient.getGraphicStatistics(earthReq).then((response) => {
           var data = response.toObject();
-          this.pie2.data = data.graphicStatisticsList;
+          data.graphicStatisticsList.forEach((item,index) =>{
+            var dataJson = {name:'',value:''}
+            dataJson.name = item.bankName;
+            dataJson.value = item.payAmount
+            this.pie2.data.push(dataJson)
+          })
           this.bankFlag = true;
         });
       } else if (index == 1) {
@@ -582,6 +655,21 @@ export default {
         earthClient.getGraphicStatistics(earthReq).then((response) => {
           var data = response.toObject().graphicStatisticsList;
           this.depData = data;
+        });
+      }else if (index == 0) {
+        this.coverBox = true;
+        earthReq.setStatisticalType("area");
+        earthClient.getGraphicStatistics(earthReq).then((response) => {
+          var data = response.toObject().graphicStatisticsList;
+          this.coverData = data;
+        });
+      }else if (index == 2) {
+        this.butieBox = true;
+        earthReq.setStatisticalType("rebate");
+        earthClient.getGraphicStatistics(earthReq).then((response) => {
+          var data = response.toObject().graphicStatisticsList;
+          console.log('rebate',data)
+          this.butieData = data;
         });
       }
     },
@@ -595,7 +683,7 @@ export default {
     handleClick(tab, event) {
       tab.name == "1"
         ? (this.titleBox2 = "补贴项目（万元）")
-        : (this.titleBox2 = "补贴项目（个）");
+        : (this.titleBox2 = "补贴项目（人次）");
     },
     flayEarth() {
       Bus.$emit("flayToMap");
@@ -795,7 +883,9 @@ h3 {
 .top ul li:nth-child(6) {
   width: 22%;
 }
+.top ul li:nth-child(1),
 .top ul li:nth-child(2),
+.top ul li:nth-child(3),
 .top ul li:nth-child(4){
   cursor: pointer;
 }

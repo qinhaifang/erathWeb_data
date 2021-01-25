@@ -2527,9 +2527,15 @@ proto.earth.GraphicStatisticsRes.prototype.toObject = function(opt_includeInstan
  */
 proto.earth.GraphicStatisticsRes.toObject = function(includeInstance, msg) {
   var f, obj = {
-    name: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    value: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    totalCount: jspb.Message.getFieldWithDefault(msg, 3, "")
+    areaName: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    organName: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    rebateName: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    bankName: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    personCount: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    payAmount: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    coverCount: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    rebateIdCount: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    bankTypeCount: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -2568,15 +2574,39 @@ proto.earth.GraphicStatisticsRes.deserializeBinaryFromReader = function(msg, rea
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setName(value);
+      msg.setAreaName(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setValue(value);
+      msg.setOrganName(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setTotalCount(value);
+      msg.setRebateName(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setBankName(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPersonCount(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPayAmount(value);
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setCoverCount(value);
+      break;
+    case 8:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setRebateIdCount(value);
+      break;
+    case 9:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setBankTypeCount(value);
       break;
     default:
       reader.skipField();
@@ -2607,24 +2637,66 @@ proto.earth.GraphicStatisticsRes.prototype.serializeBinary = function() {
  */
 proto.earth.GraphicStatisticsRes.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getName();
+  f = message.getAreaName();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getValue();
+  f = message.getOrganName();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getTotalCount();
+  f = message.getRebateName();
   if (f.length > 0) {
     writer.writeString(
       3,
+      f
+    );
+  }
+  f = message.getBankName();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
+  f = message.getPersonCount();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
+      f
+    );
+  }
+  f = message.getPayAmount();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
+  f = message.getCoverCount();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
+      f
+    );
+  }
+  f = message.getRebateIdCount();
+  if (f !== 0) {
+    writer.writeInt32(
+      8,
+      f
+    );
+  }
+  f = message.getBankTypeCount();
+  if (f !== 0) {
+    writer.writeInt32(
+      9,
       f
     );
   }
@@ -2632,10 +2704,10 @@ proto.earth.GraphicStatisticsRes.serializeBinaryToWriter = function(message, wri
 
 
 /**
- * optional string name = 1;
+ * optional string area_name = 1;
  * @return {string}
  */
-proto.earth.GraphicStatisticsRes.prototype.getName = function() {
+proto.earth.GraphicStatisticsRes.prototype.getAreaName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -2644,16 +2716,16 @@ proto.earth.GraphicStatisticsRes.prototype.getName = function() {
  * @param {string} value
  * @return {!proto.earth.GraphicStatisticsRes} returns this
  */
-proto.earth.GraphicStatisticsRes.prototype.setName = function(value) {
+proto.earth.GraphicStatisticsRes.prototype.setAreaName = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional string value = 2;
+ * optional string organ_name = 2;
  * @return {string}
  */
-proto.earth.GraphicStatisticsRes.prototype.getValue = function() {
+proto.earth.GraphicStatisticsRes.prototype.getOrganName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -2662,16 +2734,16 @@ proto.earth.GraphicStatisticsRes.prototype.getValue = function() {
  * @param {string} value
  * @return {!proto.earth.GraphicStatisticsRes} returns this
  */
-proto.earth.GraphicStatisticsRes.prototype.setValue = function(value) {
+proto.earth.GraphicStatisticsRes.prototype.setOrganName = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string total_count = 3;
+ * optional string rebate_name = 3;
  * @return {string}
  */
-proto.earth.GraphicStatisticsRes.prototype.getTotalCount = function() {
+proto.earth.GraphicStatisticsRes.prototype.getRebateName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -2680,8 +2752,116 @@ proto.earth.GraphicStatisticsRes.prototype.getTotalCount = function() {
  * @param {string} value
  * @return {!proto.earth.GraphicStatisticsRes} returns this
  */
-proto.earth.GraphicStatisticsRes.prototype.setTotalCount = function(value) {
+proto.earth.GraphicStatisticsRes.prototype.setRebateName = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string bank_name = 4;
+ * @return {string}
+ */
+proto.earth.GraphicStatisticsRes.prototype.getBankName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.GraphicStatisticsRes} returns this
+ */
+proto.earth.GraphicStatisticsRes.prototype.setBankName = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional string person_count = 5;
+ * @return {string}
+ */
+proto.earth.GraphicStatisticsRes.prototype.getPersonCount = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.GraphicStatisticsRes} returns this
+ */
+proto.earth.GraphicStatisticsRes.prototype.setPersonCount = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional string pay_amount = 6;
+ * @return {string}
+ */
+proto.earth.GraphicStatisticsRes.prototype.getPayAmount = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.GraphicStatisticsRes} returns this
+ */
+proto.earth.GraphicStatisticsRes.prototype.setPayAmount = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional string cover_count = 7;
+ * @return {string}
+ */
+proto.earth.GraphicStatisticsRes.prototype.getCoverCount = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.earth.GraphicStatisticsRes} returns this
+ */
+proto.earth.GraphicStatisticsRes.prototype.setCoverCount = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
+};
+
+
+/**
+ * optional int32 rebate_id_count = 8;
+ * @return {number}
+ */
+proto.earth.GraphicStatisticsRes.prototype.getRebateIdCount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.earth.GraphicStatisticsRes} returns this
+ */
+proto.earth.GraphicStatisticsRes.prototype.setRebateIdCount = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional int32 bank_type_count = 9;
+ * @return {number}
+ */
+proto.earth.GraphicStatisticsRes.prototype.getBankTypeCount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.earth.GraphicStatisticsRes} returns this
+ */
+proto.earth.GraphicStatisticsRes.prototype.setBankTypeCount = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 
