@@ -85,7 +85,7 @@
               <span v-show="index == currentIndexs" class="popName">{{
                 item.areaName
               }}</span>
-              <li :key="index">
+              <li :key="index" @click="linkHref(item.areaCode,'area')">
                 <span></span>
                 <span @mouseover="mouseOvers(index, item.areaName)">{{
                   item.areaName
@@ -106,7 +106,7 @@
               <span v-show="index == currentIndex" class="popName">{{
                 item.organName
               }}</span>
-              <li :key="index">
+              <li :key="index" @click="linkHref(item.organId,'organ')">
                 <!-- <span
                   :class="{
                     color1: index == 0,
@@ -157,7 +157,7 @@
         style="margin-top: 4%"
       >
         <el-table :data="depData" height="500px" style="font-size:16px"> 
-          <el-table-column property="organName" label="主管部门"></el-table-column>
+          <el-table-column property='organName' label="主管部门"></el-table-column>
           <el-table-column
             property="rebateIdCount"
             label="补贴项目数"
@@ -261,7 +261,7 @@ import PieCharts from "../components/pieCharts";
 import EarthMap from "../components/earthMap";
 import BarChart from "../components/barChart";
 import BarCharts from "../components/barCharts";
-import { earthClient } from "@/api/public.js";
+import { earthClient ,hostIp} from "@/api/public.js";
 import { StatisticalReq } from "@/api/earth/earth_message_pb.js";
 
 export default {
@@ -383,10 +383,20 @@ export default {
       rankNodata:false
     };
   },
+  computed:{
+    organNames:function(){
+      var str;
+      this.depData.forEach(item =>{
+        str = item.organName.substring(4)
+      })
+      return str
+    }
+  },
   watch: {
     year: function (value) {
       let earthReq = new StatisticalReq();
       this.paramsData.year = value
+      sessionStorage.setItem('year',value)
       earthReq.setStatisticalCode(this.adcode);
       earthReq.setStatisticalYear(this.year.substr(0, 4));
       earthReq.setStatisticalType(this.type);
@@ -404,6 +414,7 @@ export default {
       this.getDepList(earthReq);
     },
     adcode: function (newVal, oldVal) {
+      sessionStorage.setItem('adcode',newVal)
       let earthReq = new StatisticalReq();
       earthReq.setStatisticalCode(this.adcode);
       earthReq.setStatisticalYear(this.year.substr(0, 4));
@@ -422,6 +433,7 @@ export default {
       }else{
         this.totalData[0].name = '覆盖乡镇'
       }
+      
     },
     flayTo: function (value) {
       let earthReq = new StatisticalReq();
@@ -442,6 +454,9 @@ export default {
       this.areaList(earthReq);
       this.getDepList(earthReq);
     },
+  },
+  beforecreate(){
+    console.log('刷新页面')
   },
   mounted() {
     let earthReq = new StatisticalReq();
@@ -537,12 +552,12 @@ export default {
         this.bar1.dataY = [];
         this.bar1.dataX = [];
         data.moneyResList.forEach((item, index) => {
-          this.bar.dataY.push(item.rebateType);
+          this.bar.dataY.push(item.rebateType +'_' + item.rebateId);
           this.bar.dataX.push(Number(item.totalMoney).toFixed(2));
           this.bar.rebateIds.push(item.rebateId);
         });
         data.countResList.forEach((item, index) => {
-          this.bar1.dataY.push(item.rebateType);
+          this.bar1.dataY.push(item.rebateType +'_' + item.rebateId);
           this.bar1.dataX.push(Number(item.totalCount));
         });
         this.subsidyListId = data.moneyResList;
@@ -668,7 +683,6 @@ export default {
         earthReq.setStatisticalType("rebate");
         earthClient.getGraphicStatistics(earthReq).then((response) => {
           var data = response.toObject().graphicStatisticsList;
-          console.log('rebate',data)
           this.butieData = data;
         });
       }
@@ -724,6 +738,13 @@ export default {
       Bus.$emit("flayToMap");
       this.clickIn = false
     },
+    linkHref(id,type){
+      if(type == 'area'){
+        window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ id +'&yearSe=' + this.year.substr(0,4) + '&type=area&status=finished')
+      }else{
+        window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ this.adcode +'&yearSe=' + this.year.substr(0,4) +'&organId=' + id + '&type=organ&status=finished')
+      }
+    }
   },
 };
 </script>
@@ -811,6 +832,7 @@ h3 {
     rgba(0, 43, 144, 0) 0%,
     rgba(0, 125, 203, 0.51) 100%
   );
+  cursor: pointer;
 }
 .color1 {
   background: #ff3c3c;

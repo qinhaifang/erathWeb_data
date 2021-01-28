@@ -9,6 +9,7 @@
 </template>
 <script>
 import echarts from "echarts";
+import {hostIp} from "@/api/public.js";
 export default {
   props: ["barData"],
   data() {
@@ -58,7 +59,7 @@ export default {
             type: "none",
           },
           formatter: function (params) {
-            return params[0].name + " : " + params[0].value + unit;
+            return params[0].name.split('_')[0] + " : " + params[0].value + unit;
           },
         },
         xAxis: {
@@ -77,8 +78,8 @@ export default {
               },
               formatter:function(value){
                 var res = value;
-                if(res.length >7){
-                  res = res.substring(0,6) + ".."
+                if(res.length >6){
+                  res = res.substring(0,5) + ".."
                 }
                 return res;
               }
@@ -161,7 +162,10 @@ export default {
       // triggerEvent为true时，触发点击事件
       if(this.barData.id == 'barChart' || this.barData.id == 'barChart1' ){
         this.barChart.on("click", function (params) {
-          Bus.$emit("buTeiDesc", params.name,params.dataIndex,true);
+          var year = sessionStorage.getItem('year') ? sessionStorage.getItem('year') : new Date().getFullYear()
+          var adcode = sessionStorage.getItem('adcode') ? sessionStorage.getItem('adcode') : '14'
+          window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ adcode +'&yearSe=' + year +'&rebateId=' + params.name.split('_')[1] + '&type=rebate&status=finished')
+          // Bus.$emit("buTeiDesc", params.name,params.dataIndex,true);
         });
       }
     },
@@ -170,3 +174,4 @@ export default {
 </script>
 <style scoped>
 </style>
+

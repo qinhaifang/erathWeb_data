@@ -12,11 +12,14 @@
 </template>
 <script>
 import echarts from "echarts";
+import {hostIp} from "@/api/public.js";
 export default {
   props: ["pieData",'params'],
   data() {
     return {
       chartPie: null,
+      year:new Date().getFullYear(),
+      code:'14'
     };
   },
   watch: {
@@ -26,7 +29,6 @@ export default {
   },
   mounted() {
     this.drawLine();
-
   },
   methods: {
     drawLine() {
@@ -212,6 +214,11 @@ export default {
         }]
       };
        _this.chartPie.setOption(option)
+      _this.chartPie.on('click',function(params){
+        var year = sessionStorage.getItem('year') ? sessionStorage.getItem('year') : _this.year
+        var adcode = sessionStorage.getItem('adcode') ? sessionStorage.getItem('adcode') : _this.code
+        window.open(hostIp + '/private/sidy/accordingarea/list.jhtml?areaCode='+ adcode +'&yearSe=' + year)
+      })
     },
   },
 };
