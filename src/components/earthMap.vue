@@ -56,7 +56,7 @@ export default {
           name: "山西省"
         }
       ],
-      year:'',
+      year:new Date().getFullYear(),
       nameList:[]
     };
   },
@@ -65,7 +65,7 @@ export default {
       this.year = newVal.year.substr(0, 4)
       let earthReqs = new StatisticalReq();
       earthReqs.setStatisticalCode('14')
-      earthReqs.setStatisticalYear(newVal.year.substr(0, 4))
+      earthReqs.setStatisticalYear(sessionStorage.getItem('year') ? sessionStorage.getItem('year') + '': this.year)
       this.getPopbox(earthReqs);
       sessionStorage.setItem('year',this.year)
     },
@@ -79,13 +79,14 @@ export default {
     let earthReqs = new StatisticalReq();
     earthReqs.setStatisticalCode('14')
     earthReqs.setStatisticalYear(sessionStorage.getItem('year') ? sessionStorage.getItem('year') + '': this.year)
+    this.getPopbox(earthReqs)
     Bus.$on('flayToMap',()=>{ 
       clearInterval(timer);      
       this.timer = null;
       this.mapBox = true;
       this.mapBoxTitle = '山西省'
       setTimeout(this.addZoneBoundary(this.zoneObject[0]),1000)
-       this.getPopbox(earthReqs)
+      this.getPopbox(earthReqs)
     })
     Bus.$on("zone-click-event",zoneName =>{
       if (!zoneName) {
@@ -100,7 +101,7 @@ export default {
       this.clearZoneBoundary();
     });
     
-    this.getPopbox(earthReqs)
+    
   },
   methods: {
     init() {
@@ -154,7 +155,7 @@ export default {
             destination:Cesium.Cartesian3.fromDegrees(x,35.5,16000000)
           })
       },16)
-      
+
     },
      // 获取覆盖区域
     getList(){
@@ -326,7 +327,7 @@ export default {
         let data = response.toObject();
         if(data.bonusResList.length > 0){
           this.mapBoxData = data.bonusResList[0];
-          
+          console.log('参数',earthReq.toObject(),'返回值',this.mapBoxData)
         }else{
           this.mapBoxData = {
             personCount:0,
@@ -361,7 +362,7 @@ export default {
 <style scoped>
 #cesium-earth {
   width: 100%;
-  height: 100%;
+  height: 737px;
   border-radius: 5px; overflow: hidden;
   background-image: none; background-color: transparent;
 }

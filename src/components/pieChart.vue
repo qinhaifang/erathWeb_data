@@ -217,7 +217,7 @@ export default {
       _this.chartPie.on('click',function(params){
         var year = sessionStorage.getItem('year') ? sessionStorage.getItem('year') : _this.year
         var adcode = sessionStorage.getItem('adcode') ? sessionStorage.getItem('adcode') : _this.code
-        window.open(hostIp + '/private/sidy/accordingarea/list.jhtml?areaCode='+ adcode +'&yearSe=' + year)
+        window.open(hostIp + '/private/sidy/accordingarea/list.jhtml?areaCode='+ adcode +'&bonusYear=' + year)
       })
     },
   },

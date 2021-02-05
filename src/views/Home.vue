@@ -459,6 +459,7 @@ export default {
     console.log('刷新页面')
   },
   mounted() {
+    sessionStorage.setItem('year',new Date().getFullYear())
     let earthReq = new StatisticalReq();
     earthReq.setStatisticalCode(this.adcode);
     earthReq.setStatisticalYear(this.year.substr(0, 4));
@@ -600,6 +601,7 @@ export default {
     coverArea(params) {
       earthClient.getGraphicStatistics(params).then((response) => {
         var data = response.toObject();
+        console.log('覆盖区域',data,'参数',params.toObject())
         this.total =
           Number(data.graphicStatisticsList[0].coverCount) +
           Number(data.graphicStatisticsList[1].coverCount);
@@ -740,9 +742,9 @@ export default {
     },
     linkHref(id,type){
       if(type == 'area'){
-        window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ id +'&yearSe=' + this.year.substr(0,4) + '&type=area&status=finished')
+        window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ id +'&bonusYear=' + this.year.substr(0,4) + '&type=area&status=finished')
       }else{
-        window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ this.adcode +'&yearSe=' + this.year.substr(0,4) +'&organId=' + id + '&type=organ&status=finished')
+        window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ this.adcode +'&bonusYear=' + this.year.substr(0,4) +'&organId=' + id + '&type=organ&status=finished')
       }
     }
   },
@@ -825,6 +827,7 @@ h3 {
 }
 .rank ul li,
 .dep ul li {
+  width: 100%;
   padding: 5px 10px;
   margin: 8px;
   background: linear-gradient(
@@ -863,7 +866,8 @@ h3 {
 .rank ul li span:nth-child(2),
 .dep ul li span:nth-child(2) {
   display: block;
-  width: 7rem;
+  /* width: 7rem; */
+  width: 30%;
   padding-left: 4px;
   text-align: left;
 }
@@ -876,7 +880,7 @@ h3 {
 }
 .rank ul li span:nth-child(3),
 .dep ul li span:nth-child(3) {
-  width: 5rem;
+  width: 20%;
   text-align: center;
 }
 .rank ul li span:not(:first-child),
@@ -885,7 +889,7 @@ h3 {
 }
 .rank ul li span:last-child,
 .dep ul li span:last-child {
-  width: 7rem;
+  width: 30%;
   text-align: right;
 }
 .top {
@@ -903,7 +907,7 @@ h3 {
 }
 .top ul li:nth-child(5),
 .top ul li:nth-child(6) {
-  width: 22%;
+  width: 21%;
 }
 .top ul li:nth-child(1),
 .top ul li:nth-child(2),
@@ -924,7 +928,7 @@ h3 {
   font-family: "number";
 }
 .box {
-  height: 450px;
+  height: 435px;
   overflow: auto;
 }
 .datePicker {
@@ -954,7 +958,7 @@ h3 {
 .helpIcon {
   width: 1.5625rem;
   position: absolute;
-  margin-left: 4%;
+  margin-left: 5%;
   margin-top: -0.6875rem;
 }
 .boxTitle {
@@ -1056,6 +1060,9 @@ h3 {
   right: -34px !important;
 }
 .el-dialog__headerbtn .el-dialog__close {
+  color: #fff;
+}
+.el-table__empty-text{
   color: #fff;
 }
 </style>

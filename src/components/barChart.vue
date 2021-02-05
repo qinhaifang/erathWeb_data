@@ -164,7 +164,7 @@ export default {
         this.barChart.on("click", function (params) {
           var year = sessionStorage.getItem('year') ? sessionStorage.getItem('year') : new Date().getFullYear()
           var adcode = sessionStorage.getItem('adcode') ? sessionStorage.getItem('adcode') : '14'
-          window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ adcode +'&yearSe=' + year +'&rebateId=' + params.name.split('_')[1] + '&type=rebate&status=finished')
+          window.open(hostIp + '/private/sidy/sidy_statistical/condition/list.jhtml?areaCode='+ adcode +'&bonusYear=' + year +'&rebateId=' + params.name.split('_')[1] + '&type=rebate&status=finished')
           // Bus.$emit("buTeiDesc", params.name,params.dataIndex,true);
         });
       }
