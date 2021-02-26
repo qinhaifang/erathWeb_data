@@ -52,7 +52,7 @@ export default {
           zoneName: "sx",
           lon: 112.549248,
           lat: 37.857014,
-          height: 1600000,
+          height: 1600000/1.8,
           name: "山西省"
         }
       ],
@@ -171,7 +171,7 @@ export default {
       let num = 0;
       this.$axios({
         method:'get',
-        url:'../../static/data/sx.json',
+        url:'../../static/jsonData/sx.json',
       }).then(res =>{
         let data = res.data.features;
         data.forEach((item,j) =>{
@@ -181,7 +181,7 @@ export default {
                 zoneName: items.regionName,
                 lon: item.properties.center[0],
                 lat: item.properties.center[1],
-                height: 311615,
+                height: 311615/1.8,
                 name: items.regionName
               })
             }
@@ -201,7 +201,7 @@ export default {
     // 加载行政边界
     addZoneBoundary(obj,isFly = true){
       // neighborhoodsPromise;
-      let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/data/${obj.zoneName}.json`,{
+      let neighborhoodsPromise = Cesium.GeoJsonDataSource.load(`static/jsonData/${obj.zoneName}.json`,{
         stroke:Cesium.Color.YELLOW,
         fill:Cesium.Color.fromCssColorString("#3d88c6").withAlpha(0), //地块颜色
         strokeWidth:50

@@ -247,9 +247,12 @@
         :visible.sync="bankBox"
         destroy-on-close
         width="22%"
-        style="margin-top: 8%"
+        style="padding-top:8%"
       >
-        <pie-charts v-if="bankFlag" :pieData="pie2"></pie-charts>
+        <div class="nodata" v-show="bankNodata">
+          <p style="font-size:16px;padding-bottom:40px;color:#fff">暂无数据</p>
+        </div>
+        <pie-charts v-if="bankFlag" v-show="!bankNodata" :pieData="pie2"></pie-charts>
       </el-dialog>
     </div>
   </div>
@@ -380,7 +383,8 @@ export default {
       subsidyListId: [],
       currentIndex: null,
       currentIndexs: null,
-      rankNodata:false
+      rankNodata:false,
+      bankNodata:true
     };
   },
   computed:{
@@ -405,7 +409,12 @@ export default {
       this.quyuFlag = false;
       this.fugai = false;
       this.descFlag = false;
-      this.coverArea(earthReq);
+      let earthReqs = new StatisticalReq();
+      earthReqs.setStatisticalCode('14');
+      earthReqs.setStatisticalYear(this.year.substr(0, 4));
+      earthReqs.setStatisticalType(this.type);
+      earthReqs.setStatisticalId(this.rebateId);
+      this.coverArea(earthReqs);
       this.getTotal(earthReq);
       this.getRank(earthReq);
       this.getType(earthReq);
@@ -601,7 +610,6 @@ export default {
     coverArea(params) {
       earthClient.getGraphicStatistics(params).then((response) => {
         var data = response.toObject();
-        console.log('覆盖区域',data,'参数',params.toObject())
         this.total =
           Number(data.graphicStatisticsList[0].coverCount) +
           Number(data.graphicStatisticsList[1].coverCount);
@@ -657,14 +665,21 @@ export default {
         this.bankBox = true;
         earthReq.setStatisticalType("bank");
         earthClient.getGraphicStatistics(earthReq).then((response) => {
-          var data = response.toObject();
-          data.graphicStatisticsList.forEach((item,index) =>{
-            var dataJson = {name:'',value:''}
-            dataJson.name = item.bankName;
-            dataJson.value = item.payAmount
-            this.pie2.data.push(dataJson)
-          })
+          var datas = response.toObject();
+          this.pie2.data = []
+          if(datas.graphicStatisticsList.length > 0){
+            this.bankNodata = false
+            datas.graphicStatisticsList.forEach((item,index) =>{
+              var dataJson = {name:'',value:''}
+              dataJson.name = item.bankName;
+              dataJson.value = item.payAmount
+              this.pie2.data.push(dataJson)
+            })
+          }else{
+            this.bankNodata = true
+          }
           this.bankFlag = true;
+          
         });
       } else if (index == 1) {
         this.depBox = true;
@@ -894,6 +909,7 @@ h3 {
 }
 .top {
   width: 100%;
+  z-index: 100;
 }
 .top ul {
   width: 100%;
@@ -989,6 +1005,9 @@ h3 {
 }
 </style>
 <style>
+.el-table__empty-text{
+  color: #fff!important;
+}
 .el-select {
   z-index: 10;
 }
@@ -1062,8 +1081,6 @@ h3 {
 .el-dialog__headerbtn .el-dialog__close {
   color: #fff;
 }
-.el-table__empty-text{
-  color: #fff;
-}
+
 </style>
 
